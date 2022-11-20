@@ -11,7 +11,7 @@ export function getCategory({
   userId: User["id"];
 }) {
   return prisma.category.findFirst({
-    select: { id: true, name: true },
+    select: { id: true, name: true, color: true },
     where: { id, userId },
   });
 }
