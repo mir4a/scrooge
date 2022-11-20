@@ -21,21 +21,21 @@ export async function action({ request }: ActionArgs) {
 
   if (typeof info !== "string" || info.length === 0) {
     return json(
-      { errors: { info: "Info is required", description: null } },
+      { errors: { name: "info", description: "Info is required" } },
       { status: 400 }
     );
   }
 
   if (!isDateValid) {
     return json(
-      { errors: { info: null, description: "Date is required" } },
+      { errors: { name: "date", description: "Date is required" } },
       { status: 400 }
     );
   }
 
   if (typeof value !== "string" || value.length === 0) {
     return json(
-      { errors: { info: null, description: "Value is required" } },
+      { errors: { name: "value", description: "Value is required" } },
       { status: 400 }
     );
   }
@@ -44,7 +44,7 @@ export async function action({ request }: ActionArgs) {
 
   if (categoryId !== null && typeof categoryId !== "string") {
     return json(
-      { errors: { info: null, description: "Category should a string" } },
+      { errors: { name: "category", description: "Category should a string" } },
       { status: 400 }
     );
   }
@@ -76,13 +76,13 @@ export default function RecordNewPage() {
   const categoryRef = React.useRef<HTMLSelectElement>(null);
 
   React.useEffect(() => {
-    if (actionData?.errors?.info) {
+    if (actionData?.errors?.name === "info") {
       infoRef.current?.focus();
-    } else if (actionData?.errors?.date) {
+    } else if (actionData?.errors?.name === "date") {
       dateRef.current?.focus();
-    } else if (actionData?.errors?.value) {
+    } else if (actionData?.errors?.name === "value") {
       valueRef.current?.focus();
-    } else if (actionData?.errors?.category) {
+    } else if (actionData?.errors?.name === "category") {
       categoryRef.current?.focus();
     }
   }, [actionData]);
