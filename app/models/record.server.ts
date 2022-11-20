@@ -81,11 +81,13 @@ export function updateRecord({
       info,
       date,
       value,
-      category: {
-        connect: {
-          id: categoryId,
+      ...(categoryId && {
+        category: {
+          connect: {
+            id: categoryId,
+          },
         },
-      },
+      }),
     },
   });
 }
