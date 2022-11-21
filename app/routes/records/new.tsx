@@ -11,6 +11,7 @@ export async function action({ request }: ActionArgs) {
   const userId = await requireUserId(request);
 
   const formData = await request.formData();
+  const type = formData.get("type");
   const info = formData.get("info");
   const date = formData.get("date");
   const value = formData.get("amount");
@@ -49,10 +50,12 @@ export async function action({ request }: ActionArgs) {
     );
   }
 
+  const correctValue = type === "income" ? value : `-${value}`;
+
   const record = await createRecord({
     info,
     date: new Date(date),
-    value: Number(value),
+    value: Number(correctValue),
     categoryId: categoryId ?? null,
     userId,
   });
@@ -91,6 +94,12 @@ export default function RecordNewPage() {
     <Form method="post">
       <div className="flex flex-col space-y-4">
         <div className="flex flex-col space-y-1">
+          <label htmlFor="type-income">Income</label>
+          <input type="radio" name="type" id="type-income" value="income" />
+          <label htmlFor="type-expense">Expense</label>
+          <input type="radio" name="type" id="type-expense" value="expense" />
+        </div>
+        <div className="flex flex-col space-y-1">
           <label htmlFor="info">Info</label>
           <textarea
             id="info"
@@ -127,6 +136,7 @@ export default function RecordNewPage() {
             ref={categoryRef}
             className="rounded-md border border-gray-300 p-2"
           >
+            <option value="">not selected</option>
             {data.categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
