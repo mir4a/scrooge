@@ -5,6 +5,7 @@ import { Form, Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
 import { getCategories } from "~/models/category.server";
+import CategoryListItem from "~/components/category-list-item";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
@@ -46,16 +47,7 @@ export default function CategoriesPage() {
           ) : (
             <ol>
               {data.categories.map((category) => (
-                <li key={category.id}>
-                  <NavLink
-                    className={({ isActive }) =>
-                      `block border-b p-4 text-xl ${isActive ? "bg-white" : ""}`
-                    }
-                    to={category.id}
-                  >
-                    {category.name}
-                  </NavLink>
-                </li>
+                <CategoryListItem key={category.id} category={category} />
               ))}
             </ol>
           )}
