@@ -5,7 +5,7 @@ import { Form, Link, Outlet, useLoaderData } from "@remix-run/react";
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
 import { getCategories } from "~/models/category.server";
-import CategoryListItem from "~/components/category-list-item";
+import CategoryListItem from "~/components/category/category-list-item";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);

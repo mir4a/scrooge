@@ -18,7 +18,7 @@ export default function CategoryListItem({ category }: CategoryListItemProps) {
         className={({ isActive }) =>
           `block border-b p-4 text-xl ${isActive ? "bg-white" : ""}`
         }
-        to={id}
+        to={`/categories/${id}`}
       >
         <span style={{ color: color }} className="invert">
           {name}
