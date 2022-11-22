@@ -2,8 +2,8 @@ import type { Category as ICategory, Record as IRecord } from "@prisma/client";
 import { NavLink } from "@remix-run/react";
 
 export interface RecordListItemProps {
-  record: Pick<IRecord, "id" | "info" | "date" | "value">;
-  category: Pick<ICategory, "id" | "name" | "color">;
+  record: Pick<IRecord, "id" | "info" | "value"> & { date: string };
+  category: Pick<ICategory, "id" | "name" | "color"> | null;
 }
 
 export default function RecordListItem({
