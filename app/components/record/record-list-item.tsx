@@ -15,7 +15,7 @@ export default function RecordListItem({
     <li
       className="border-l-8"
       style={{
-        borderColor: category?.color ?? "transparent",
+        borderColor: category ? category.color : "transparent",
       }}
     >
       <NavLink
