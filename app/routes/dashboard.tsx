@@ -7,7 +7,6 @@ import RecordListItem from "~/components/record/record-list-item";
 
 import { getCategories } from "~/models/category.server";
 import {
-  getExpenses,
   getExpensesGroupedByCategory,
   getIncomes,
   getRecords,
