@@ -2,7 +2,7 @@ import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import CategoryListItem from "~/components/category/category-list-item";
-import { ExpenseChart } from "~/components/dashboard/expense-chard";
+import { ExpensePieChart } from "~/components/dashboard/expense-pie";
 import RecordListItem from "~/components/record/record-list-item";
 
 import { getCategories } from "~/models/category.server";
@@ -31,7 +31,7 @@ export default function Dashboard() {
     <div>
       <h1 className="text-2xl font-bold">Dashboard</h1>
       <div>
-        <ExpenseChart data={data.expenses} />
+        <ExpensePieChart data={data.expenses} categories={data.categories} />
       </div>
       <div className="flex flex-col">
         <div className="flex flex-row">

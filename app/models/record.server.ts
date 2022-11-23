@@ -121,10 +121,6 @@ export function getExpensesGroupedByCategory({
       _all: true,
       value: true,
     },
-    // select: {
-    //   categoryId: true,
-    //   value: true,
-    // },
     _sum: { value: true },
   });
 }

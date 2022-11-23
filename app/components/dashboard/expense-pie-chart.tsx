@@ -1,14 +1,15 @@
 import React from "react";
 import { Pie, PieChart, Tooltip } from "recharts";
 
-export interface ExpenseChartProps {
+export interface ExpensePieChartProps {
   data: any[];
+  categories: any[];
 }
 
 let isHydrating = true;
 
-export const ExpenseChart = (props: ExpenseChartProps) => {
-  const { data } = props;
+export const ExpensePieChart = (props: ExpensePieChartProps) => {
+  const { data, categories } = props;
   const [isHydrated, setIsHydrated] = React.useState(!isHydrating);
 
   React.useEffect(() => {
@@ -16,12 +17,21 @@ export const ExpenseChart = (props: ExpenseChartProps) => {
     setIsHydrated(true);
   }, []);
 
+  const categoriesMap = categories.reduce((acc, category) => {
+    acc[category.id] = category;
+    return acc;
+  }, {});
+
   console.log(data);
 
   const chartData = data.map((record) => ({
-    name: record.categoryId ? record.categoryId : "Uncategorized",
+    name: record.categoryId
+      ? categoriesMap[record.categoryId].name
+      : "Uncategorized",
     value: Math.abs(record._sum.value),
-    // fill: record.categoryId ? record.category.color : "#000",
+    fill: record.categoryId
+      ? categoriesMap[record.categoryId].color
+      : "#dedede",
   }));
 
   console.log(chartData);
