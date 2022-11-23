@@ -100,3 +100,39 @@ export function deleteRecord({
     where: { id, userId },
   });
 }
+
+export function getExpenses({ userId }: { userId: User["id"] }) {
+  return prisma.record.findMany({
+    where: { userId, value: { lt: 0 } },
+    select: { id: true, info: true, date: true, value: true, category: true },
+    orderBy: { date: "desc" },
+  });
+}
+
+export function getExpensesGroupedByCategory({
+  userId,
+}: {
+  userId: User["id"];
+}) {
+  return prisma.record.groupBy({
+    where: { userId, value: { lt: 0 } },
+    by: ["categoryId"],
+    _count: {
+      _all: true,
+      value: true,
+    },
+    // select: {
+    //   categoryId: true,
+    //   value: true,
+    // },
+    _sum: { value: true },
+  });
+}
+
+export function getIncomes({ userId }: { userId: User["id"] }) {
+  return prisma.record.findMany({
+    where: { userId, value: { gt: 0 } },
+    select: { id: true, info: true, date: true, value: true, category: true },
+    orderBy: { date: "desc" },
+  });
+}
