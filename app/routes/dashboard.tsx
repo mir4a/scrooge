@@ -2,7 +2,7 @@ import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import CategoryListItem from "~/components/category/category-list-item";
-import { ExpensePieChart } from "~/components/dashboard/expense-pie";
+import { ExpensePieChart } from "~/components/dashboard/expense-pie-chart";
 import RecordListItem from "~/components/record/record-list-item";
 
 import { getCategories } from "~/models/category.server";
