@@ -3,6 +3,7 @@ import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import * as React from "react";
 import invariant from "tiny-invariant";
+import Button from "~/components/form/button";
 
 import { getCategory, deleteCategory } from "~/models/category.server";
 import { requireUserId } from "~/session.server";
@@ -21,11 +22,15 @@ export async function loader({ request, params }: LoaderArgs) {
 
 export async function action({ request, params }: ActionArgs) {
   const userId = await requireUserId(request);
+  const formData = await request.formData();
+  const method = formData.get("_method");
+
   invariant(params.categoryId, "categoryId not found");
 
-  await deleteCategory({ id: params.categoryId, userId });
-
-  return redirect("/categories");
+  if (method === "DELETE") {
+    await deleteCategory({ id: params.categoryId, userId });
+    return redirect("/categories");
+  }
 }
 
 export default function CategoryDetailsPage() {
@@ -37,12 +42,10 @@ export default function CategoryDetailsPage() {
       <p className="py-6">{data.category.color}</p>
       <hr className="my-4" />
       <Form method="post">
-        <button
-          type="submit"
-          className="rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
-        >
+        <input type="hidden" name="_method" value="DELETE" />
+        <Button kind="secondary" size="small" type="submit">
           Delete
-        </button>
+        </Button>
       </Form>
     </div>
   );

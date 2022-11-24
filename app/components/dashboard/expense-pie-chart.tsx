@@ -1,5 +1,5 @@
 import React from "react";
-import { Pie, PieChart, Tooltip } from "recharts";
+import { Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 export interface ExpensePieChartProps {
   data: any[];
@@ -76,18 +76,19 @@ export const ExpensePieChart = (props: ExpensePieChartProps) => {
   }
 
   return (
-    <PieChart width={400} height={400} id="expense-chart">
-      <Pie
-        data={chartData}
-        dataKey="value"
-        nameKey="name"
-        cx="50%"
-        cy="50%"
-        innerRadius={60}
-        outerRadius={80}
-        label={renderCustomizedLabel}
-      >
-        {/* <LabelList
+    <ResponsiveContainer width="100%" height={400}>
+      <PieChart id="expense-chart">
+        <Pie
+          data={chartData}
+          dataKey="value"
+          nameKey="name"
+          cx="50%"
+          cy="50%"
+          innerRadius={60}
+          outerRadius={80}
+          label={renderCustomizedLabel}
+        >
+          {/* <LabelList
           // dataKey="name"
           position="outside"
           fill="red"
@@ -109,8 +110,9 @@ export const ExpensePieChart = (props: ExpensePieChartProps) => {
           }}
         />
         <Label fill="#000" value="some" position="outside" /> */}
-      </Pie>
-      <Tooltip />
-    </PieChart>
+        </Pie>
+        <Tooltip />
+      </PieChart>
+    </ResponsiveContainer>
   );
 };

@@ -1,0 +1,52 @@
+.Button + .Button {
+  margin-left: 1rem;
+}
+
+.Button {
+  color: theme('colors.teal.900');
+  background-color: theme('colors.amber.50');
+  box-shadow: inset theme('colors.teal.900') 0 0 0 1px, theme('colors.white') theme('boxShadow.button.base.default'), theme('colors.teal.900') theme('boxShadow.button.outline.default');
+}
+
+.Button:hover {
+  background-color: theme('colors.amber.100');
+}
+
+.Button:not([disabled]):active {
+  background-color: theme('colors.amber.100');
+  box-shadow: inset theme('colors.teal.900') 0 0 0 1px, theme('colors.white') theme('boxShadow.button.base.active'), theme('colors.teal.900') theme('boxShadow.button.outline.active');
+  transform: translate(2px, 2px);
+}
+
+.Button--primary {
+  color: theme('colors.white');
+  background-color: theme('colors.teal.900');
+  box-shadow: theme('colors.white') theme('boxShadow.button.base.default'), theme('colors.teal.900') theme('boxShadow.button.outline.default');
+}
+
+.Button--primary:hover {
+  background-color: theme('colors.teal.800');
+}
+
+.Button--primary:not([disabled]):active {
+  background-color: theme('colors.teal.800');
+  box-shadow: theme('colors.white') theme('boxShadow.button.base.active'), theme('colors.emerald.800') theme('boxShadow.button.outline.active');
+  transform: translate(2px, 2px);
+}
+
+.Button--secondary {
+  color: theme('colors.white');
+  background-color: theme('colors.amber.600');
+  box-shadow: theme('colors.white') theme('boxShadow.button.base.default'), theme('colors.amber.600') theme('boxShadow.button.outline.default');
+}
+
+.Button--secondary:hover {
+  background-color: theme('colors.amber.500');
+}
+
+.Button--secondary:not([disabled]):active {
+  background-color: theme('colors.amber.500');
+  box-shadow: theme('colors.white') theme('boxShadow.button.base.active'), theme('colors.amber.500') theme('boxShadow.button.outline.active');
+  transform: translate(2px, 2px);
+}
+
