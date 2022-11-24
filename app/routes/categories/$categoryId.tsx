@@ -59,8 +59,8 @@ export async function action({ request, params }: ActionArgs) {
 
   await updateCategory({
     id: params.categoryId,
-    name,
-    color,
+    name: name as string,
+    color: color as string,
   });
 
   return redirect(`/categories`);
