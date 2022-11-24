@@ -1,4 +1,5 @@
 import { NavLink } from "@remix-run/react";
+import ColourIndicator from "./colour-indicator";
 
 export type Category = {
   id: string;
@@ -13,14 +14,15 @@ export interface CategoryListItemProps {
 export default function CategoryListItem({ category }: CategoryListItemProps) {
   const { id, name, color } = category;
   return (
-    <li style={{ backgroundColor: color }}>
+    <li className="group">
       <NavLink
         className={({ isActive }) =>
-          `block border-b p-4 text-xl ${isActive ? "bg-white" : ""}`
+          `block flex  p-4 text-xl ${isActive ? "bg-white" : ""}`
         }
         to={`/categories/${id}`}
       >
-        <span style={{ color: color }} className="invert">
+        <ColourIndicator colour={color} className="mr-4" />
+        <span className="group-hover:underline group-hover:decoration-2">
           {name}
         </span>
       </NavLink>

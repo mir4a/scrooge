@@ -102,7 +102,7 @@ export default function CategoryDetailsPage() {
             defaultValue={data.category.color}
           />
           <Button type="submit" className="shrink-1 w-auto">
-            Save
+            Update
           </Button>
         </div>
       </Form>

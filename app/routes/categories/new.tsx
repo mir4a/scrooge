@@ -5,6 +5,7 @@ import * as React from "react";
 import { createCategory } from "~/models/category.server";
 
 import { requireUserId } from "~/session.server";
+import Button from "~/components/form/button";
 
 export async function action({ request }: ActionArgs) {
   const userId = await requireUserId(request);
@@ -54,29 +55,21 @@ export default function NewCategory() {
   return (
     <Form method="post">
       <div className="flex flex-col space-y-4">
-        <div className="flex flex-col space-y-1">
-          <label htmlFor="name">Name</label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            ref={nameRef}
-            className="rounded-md border border-gray-300 px-2 py-1"
-          />
-        </div>
-        <div className="flex flex-col space-y-1">
-          <label htmlFor="color">Color</label>
-          <input
-            id="color"
-            name="color"
-            type="color"
-            ref={colorRef}
-            className="rounded-md border border-gray-300 px-2 py-1"
-          />
-        </div>
-        <button type="submit" className="btn">
+        <label htmlFor="name">Category name</label>
+        <input
+          id="name"
+          type="text"
+          className="Input"
+          name="name"
+          ref={nameRef}
+        />
+
+        <label htmlFor="color">Color</label>
+        <input id="color" name="color" type="color" ref={colorRef} />
+
+        <Button type="submit" kind="primary">
           Create
-        </button>
+        </Button>
       </div>
     </Form>
   );
