@@ -2,6 +2,7 @@ import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import * as React from "react";
+import Button from "~/components/form/button";
 import { getCategories } from "~/models/category.server";
 
 import { createRecord } from "~/models/record.server";
@@ -92,49 +93,62 @@ export default function RecordNewPage() {
 
   return (
     <Form method="post">
-      <div className="flex flex-col space-y-4">
-        <div className="flex flex-col space-y-1">
-          <label htmlFor="type-income">Income</label>
-          <input type="radio" name="type" id="type-income" value="income" />
-          <label htmlFor="type-expense">Expense</label>
-          <input type="radio" name="type" id="type-expense" value="expense" />
+      <div className="flex flex-col space-y-8">
+        <div className="flex flex-col space-y-4">
+          <span className="font-semibold">Type of record:</span>
+          <label htmlFor="type-income" className="flex w-fit items-center">
+            Income
+            <input
+              type="radio"
+              name="type"
+              id="type-income"
+              value="income"
+              className="ml-3"
+            />
+          </label>
+          <label htmlFor="type-expense" className="flex w-fit items-center">
+            Expense
+            <input
+              type="radio"
+              name="type"
+              id="type-expense"
+              value="expense"
+              className="ml-3"
+            />
+          </label>
         </div>
-        <div className="flex flex-col space-y-1">
+        <div className="flex flex-col">
           <label htmlFor="info">Info</label>
-          <textarea
-            id="info"
-            name="info"
-            ref={infoRef}
-            className="rounded-md border border-gray-300 p-2"
-          />
+          <textarea id="info" name="info" ref={infoRef} className="Input" />
         </div>
-        <div className="flex flex-col space-y-1">
+        <div className="flex flex-col">
           <label htmlFor="date">Date</label>
           <input
             id="date"
             name="date"
             type="date"
             ref={dateRef}
-            className="rounded-md border border-gray-300 p-2"
+            className="Input"
           />
         </div>
-        <div className="flex flex-col space-y-1">
+        <div className="flex flex-col">
           <label htmlFor="amount">Amount</label>
           <input
             id="amount"
             name="amount"
             type="number"
             ref={valueRef}
-            className="rounded-md border border-gray-300 p-2"
+            className="Input"
+            min={0}
           />
         </div>
-        <div className="flex flex-col space-y-1">
+        <div className="flex flex-col">
           <label htmlFor="categoryId">Category</label>
           <select
             id="categoryId"
             name="categoryId"
             ref={categoryRef}
-            className="rounded-md border border-gray-300 p-2"
+            className="Input"
           >
             <option value="">not selected</option>
             {data.categories.map((category) => (
@@ -144,9 +158,9 @@ export default function RecordNewPage() {
             ))}
           </select>
         </div>
-        <button type="submit" className="btn">
+        <Button type="submit" kind="primary" className="w-fit">
           Create
-        </button>
+        </Button>
       </div>
     </Form>
   );

@@ -85,23 +85,32 @@ export default function CategoryDetailsPage() {
       </div>
       <hr className="my-4 " />
       <Form method="post">
-        <div className="flex flex-col space-y-4">
-          <label htmlFor="name">Update the name</label>
-          <input
-            id="name"
-            type="text"
-            className="Input"
-            name="name"
-            defaultValue={data.category.name}
-          />
-          <label htmlFor="color">Update the color</label>
-          <input
-            type="color"
-            id="color"
-            name="color"
-            defaultValue={data.category.color}
-          />
-          <Button type="submit" className="shrink-1 w-auto">
+        <div className="flex flex-col space-y-8">
+          <div className="flex flex-col">
+            <label className="mb-2" htmlFor="name">
+              Update the name
+            </label>
+            <input
+              id="name"
+              type="text"
+              className="Input"
+              name="name"
+              defaultValue={data.category.name}
+            />
+          </div>
+          <div className="flex flex-col">
+            <label className="mb-2" htmlFor="color">
+              Update the color
+            </label>
+            <input
+              type="color"
+              id="color"
+              className="Input"
+              name="color"
+              defaultValue={data.category.color}
+            />
+          </div>
+          <Button type="submit" className="w-fit">
             Update
           </Button>
         </div>

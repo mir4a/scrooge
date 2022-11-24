@@ -54,20 +54,31 @@ export default function NewCategory() {
 
   return (
     <Form method="post">
-      <div className="flex flex-col space-y-4">
-        <label htmlFor="name">Category name</label>
-        <input
-          id="name"
-          type="text"
-          className="Input"
-          name="name"
-          ref={nameRef}
-        />
+      <div className="flex flex-col space-y-8">
+        <div className="flex flex-col">
+          <label htmlFor="name">Category name</label>
+          <input
+            id="name"
+            type="text"
+            className="Input"
+            name="name"
+            ref={nameRef}
+          />
+        </div>
 
-        <label htmlFor="color">Color</label>
-        <input id="color" name="color" type="color" ref={colorRef} />
+        <div className="flex flex-col">
+          <label htmlFor="color">Color</label>
+          <input
+            id="color"
+            className="Input"
+            name="color"
+            type="color"
+            ref={colorRef}
+            defaultValue="#134e4a"
+          />
+        </div>
 
-        <Button type="submit" kind="primary">
+        <Button type="submit" kind="primary" className="w-fit">
           Create
         </Button>
       </div>
