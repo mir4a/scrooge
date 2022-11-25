@@ -1,5 +1,6 @@
 import React from "react";
 import { Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import useMediaQuery from "~/hooks/use-media-query";
 
 export interface ExpensePieChartProps {
   data: any[];
@@ -11,6 +12,7 @@ let isHydrating = true;
 export const ExpensePieChart = (props: ExpensePieChartProps) => {
   const { data, categories } = props;
   const [isHydrated, setIsHydrated] = React.useState(!isHydrating);
+  const isDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
   React.useEffect(() => {
     isHydrating = false;
@@ -22,7 +24,7 @@ export const ExpensePieChart = (props: ExpensePieChartProps) => {
     return acc;
   }, {});
 
-  console.log(data);
+  const uncategorizedColor = isDarkMode ? "#4a5568" : "#cbd5e0";
 
   const chartData = data.map((record) => ({
     name: record.categoryId
@@ -31,7 +33,7 @@ export const ExpensePieChart = (props: ExpensePieChartProps) => {
     value: Math.abs(record._sum.value),
     fill: record.categoryId
       ? categoriesMap[record.categoryId].color
-      : "#dedede",
+      : uncategorizedColor,
   }));
 
   console.log(chartData);
@@ -45,6 +47,7 @@ export const ExpensePieChart = (props: ExpensePieChartProps) => {
     percent,
     name,
   }: any) => {
+    const textFill = isDarkMode ? "#fff" : "#000";
     const RADIAN = Math.PI / 180;
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -62,7 +65,7 @@ export const ExpensePieChart = (props: ExpensePieChartProps) => {
       <text
         x={ex + (cos >= 0 ? 1 : -1)}
         y={ey}
-        // fill="#000"
+        fill={textFill}
         textAnchor={x > cx ? "start" : "end"}
         dominantBaseline="central"
       >
@@ -87,30 +90,7 @@ export const ExpensePieChart = (props: ExpensePieChartProps) => {
           innerRadius={60}
           outerRadius={80}
           label={renderCustomizedLabel}
-        >
-          {/* <LabelList
-          // dataKey="name"
-          position="outside"
-          fill="red"
-          content={(_props) => {
-            console.log(_props);
-            return (
-              <g>
-                <text
-                  x={_props.x + _props.width / 2}
-                  y={_props.y}
-                  fill={_props.fill}
-                  textAnchor={_props.textAnchor}
-                  dominantBaseline="central"
-                >
-                  {_props.name}
-                </text>
-              </g>
-            );
-          }}
         />
-        <Label fill="#000" value="some" position="outside" /> */}
-        </Pie>
         <Tooltip />
       </PieChart>
     </ResponsiveContainer>
