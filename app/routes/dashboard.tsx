@@ -43,21 +43,22 @@ export default function Dashboard() {
           </div>
           <div className="col-span-4">another chart</div>
         </div>
-        <div className="flex flex-col">
-          <div className="flex flex-row">
-            <div className="flex flex-col">
-              <h2 className="text-xl font-bold">Categories</h2>
-              <small className="text-gray-500">select to edit or delete</small>
-              <ul>
-                {data.categories.map((category) => (
-                  <CategoryListItem key={category.id} category={category} />
-                ))}
-              </ul>
-            </div>
-            <div className="flex flex-col">
-              <h2 className="text-xl font-bold">All records</h2>
-              <RecordTable records={data.records} />
-            </div>
+        <div className="grid-cols-16 grid gap-4">
+          <div className="col-span-6">
+            <h2 className="text-xl font-bold">Categories</h2>
+            <small className="text-gray-500 dark:text-stone-300">
+              select to edit or delete
+            </small>
+            <ul>
+              {data.categories.map((category) => (
+                <CategoryListItem key={category.id} category={category} />
+              ))}
+            </ul>
+          </div>
+
+          <div className="col-span-9 col-start-8">
+            <h2 className="mb-8 text-xl font-bold">All records</h2>
+            <RecordTable records={data.records} />
           </div>
         </div>
       </MainLayout>

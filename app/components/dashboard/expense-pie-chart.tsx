@@ -62,7 +62,7 @@ export const ExpensePieChart = (props: ExpensePieChartProps) => {
       <text
         x={ex + (cos >= 0 ? 1 : -1)}
         y={ey}
-        fill="#000"
+        // fill="#000"
         textAnchor={x > cx ? "start" : "end"}
         dominantBaseline="central"
       >

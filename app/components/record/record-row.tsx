@@ -23,7 +23,7 @@ export default function RecordRow({
 
   const rowClassNames = [
     "group table-row",
-    clickable && "hover:bg-slate-50 cursor-pointer",
+    clickable && "hover:bg-slate-50 cursor-pointer dark:hover:bg-neutral-900",
   ]
     .filter(Boolean)
     .join(" ");

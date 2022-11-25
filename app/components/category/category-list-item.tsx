@@ -17,7 +17,9 @@ export default function CategoryListItem({ category }: CategoryListItemProps) {
     <li className="group">
       <NavLink
         className={({ isActive }) =>
-          `block flex  p-4 text-xl ${isActive ? "bg-white" : ""}`
+          `block flex  p-4 text-xl ${
+            isActive ? "bg-white dark:bg-stone-900" : ""
+          }`
         }
         to={`/categories/${id}`}
       >

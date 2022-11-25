@@ -201,7 +201,7 @@ export default function RecordDetailsPage() {
               ))}
             </select>
           </div>
-          <Button type="submit" kind="primary" className="w-fit">
+          <Button type="submit" className="w-fit">
             Update
           </Button>
         </div>

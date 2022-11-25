@@ -32,8 +32,6 @@ export default function RecordsPage() {
             + New Record
           </Link>
 
-          <hr />
-
           {data.records.length === 0 ? (
             <p className="p-4">No records yet</p>
           ) : (

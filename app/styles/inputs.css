@@ -13,3 +13,15 @@
   box-shadow: theme('colors.teal.900') 2px 2px 0 1px;
   outline: none;
 }
+
+@media (prefers-color-scheme: dark) {
+  .Input {
+    @apply bg-stone-800;
+  }
+
+  .Input:focus {
+    @apply border-emerald-400;
+    box-shadow: theme('colors.emerald.400') 2px 2px 0 1px;
+  }
+}
+ 

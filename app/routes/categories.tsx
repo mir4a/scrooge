@@ -32,8 +32,6 @@ export default function CategoriesPage() {
               + New Category
             </Link>
 
-            <hr />
-
             {data.categories.length === 0 ? (
               <p className="p-4">No categories yet</p>
             ) : (
