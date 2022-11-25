@@ -5,7 +5,7 @@ import CategoryListItem from "~/components/category/category-list-item";
 import { ExpensePieChart } from "~/components/dashboard/expense-pie-chart";
 import Header from "~/components/layout/header";
 import MainLayout from "~/components/layout/main";
-import RecordListItem from "~/components/record/record-list-item";
+import RecordTable from "~/components/record/record-table";
 
 import { getCategories } from "~/models/category.server";
 import {
@@ -55,16 +55,8 @@ export default function Dashboard() {
               </ul>
             </div>
             <div className="flex flex-col">
-              <h2 className="text-xl font-bold">Records</h2>
-              <ul>
-                {data.records.map((record) => (
-                  <RecordListItem
-                    key={record.id}
-                    record={record}
-                    category={record.category}
-                  />
-                ))}
-              </ul>
+              <h2 className="text-xl font-bold">All records</h2>
+              <RecordTable records={data.records} />
             </div>
           </div>
         </div>
