@@ -19,8 +19,8 @@ export default function Header({ username }: HeaderProps) {
           <Logo />
           {username && (
             <>
-              ,<br />
-              <span className="text-m -mt-4 block">({username})</span>
+              <br />
+              <span className="text-m -mt-4 block">by {username}</span>
             </>
           )}
         </h1>

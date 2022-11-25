@@ -6,20 +6,30 @@ import { useNavigate } from "@remix-run/react";
 
 export interface RecordRowProps {
   record: Record;
+  clickable?: boolean;
 }
 
-export default function RecordRow({ record }: RecordRowProps) {
+export default function RecordRow({
+  record,
+  clickable = true,
+}: RecordRowProps) {
   const navigate = useNavigate();
 
   const handleRowClick = () => {
-    navigate(`/records/${record.id}`);
+    if (clickable) {
+      navigate(`/records/${record.id}`);
+    }
   };
 
+  const rowClassNames = [
+    "group table-row",
+    clickable && "hover:bg-slate-50 cursor-pointer",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <div
-      className="group table-row cursor-pointer hover:bg-slate-50"
-      onClick={handleRowClick}
-    >
+    <div className={rowClassNames} onClick={handleRowClick}>
       <div className="table-cell border-b border-slate-100 p-4 pl-8 text-slate-500 dark:border-slate-700 dark:text-slate-400">
         {toLocaleDate(record.date)}
       </div>

@@ -24,7 +24,7 @@ export default function RecordsPage() {
       <Header username={user.email} />
 
       <div className="grid grid-cols-12 gap-4 py-8">
-        <div className="col-span-5 col-start-2 grid">
+        <div className="col-span-5 col-start-2">
           <Link
             to="new"
             className="Button Button--primary mb-10 block w-fit justify-self-end py-3 px-8 text-center text-xl font-bold"
@@ -40,7 +40,7 @@ export default function RecordsPage() {
             <RecordTable records={data.records} />
           )}
         </div>
-        <div className="col-span-5 col-start-8">
+        <div className="col-span-4 col-start-8">
           <Outlet />
         </div>
       </div>
