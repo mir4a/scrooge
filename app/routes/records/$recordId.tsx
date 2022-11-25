@@ -4,11 +4,23 @@ import { Form, useActionData, useCatch, useLoaderData } from "@remix-run/react";
 import React from "react";
 import invariant from "tiny-invariant";
 import Button from "~/components/form/button";
+import InputError from "~/components/form/input-error";
 import RecordRow from "~/components/record/record-row";
 import { getCategories } from "~/models/category.server";
 
 import { deleteRecord, getRecord, updateRecord } from "~/models/record.server";
 import { requireUserId } from "~/session.server";
+
+type ActionData =
+  | {
+      errors: {
+        info: null | string;
+        date: null | string;
+        value: null | string;
+        categoryId: null | string;
+      };
+    }
+  | undefined;
 
 export async function loader({ request, params }: LoaderArgs) {
   const userId = await requireUserId(request);
@@ -36,34 +48,41 @@ export async function action({ request, params }: ActionArgs) {
   const isDateValid =
     date && !(date instanceof File) && /^\d{4}-\d{2}-\d{2}$/.test(date);
 
+  const data: ActionData = {
+    errors: {
+      info: info ? null : "Name is required",
+      date: date ? null : "Colour is required",
+      value: value ? null : "Value is required",
+      categoryId: categoryId ? null : "Category is required",
+    },
+  };
+
   if (typeof info !== "string" || info.length === 0) {
-    return json(
-      { errors: { name: "info", description: "Info is required" } },
-      { status: 400 }
-    );
+    data.errors.info = "Info is required";
+    return json(data, { status: 400 });
   }
 
   if (!isDateValid) {
-    return json(
-      { errors: { name: "date", description: "Date is required" } },
-      { status: 400 }
-    );
+    data.errors.date = "Date is required";
+    return json(data, { status: 400 });
   }
 
   if (typeof value !== "string" || value.length === 0) {
-    return json(
-      { errors: { name: "value", description: "Value is required" } },
-      { status: 400 }
-    );
+    data.errors.value = "Value is required";
+    return json(data, { status: 400 });
   }
 
-  console.log("categoryId", categoryId);
-
   if (categoryId !== null && typeof categoryId !== "string") {
-    return json(
-      { errors: { name: "category", description: "Category should a string" } },
-      { status: 400 }
-    );
+    data.errors.categoryId = "Category should be a string";
+    return json(data, { status: 400 });
+  }
+
+  const hasErrors = Object.values(data.errors).some(
+    (errorMessage) => errorMessage
+  );
+
+  if (hasErrors) {
+    return json<ActionData>({ errors: data.errors }, { status: 400 });
   }
 
   const correctValue = type === "income" ? value : `-${value}`;
@@ -93,13 +112,13 @@ export default function RecordDetailsPage() {
   const categoryRef = React.useRef<HTMLSelectElement>(null);
 
   React.useEffect(() => {
-    if (actionData?.errors?.name === "info") {
+    if (actionData?.errors?.info) {
       infoRef.current?.focus();
-    } else if (actionData?.errors?.name === "date") {
+    } else if (actionData?.errors?.date) {
       dateRef.current?.focus();
-    } else if (actionData?.errors?.name === "value") {
+    } else if (actionData?.errors?.value) {
       valueRef.current?.focus();
-    } else if (actionData?.errors?.name === "category") {
+    } else if (actionData?.errors?.categoryId) {
       categoryRef.current?.focus();
     }
   }, [actionData]);
@@ -158,6 +177,9 @@ export default function RecordDetailsPage() {
               key={data.record.id}
               defaultValue={data.record.info}
             />
+            {actionData?.errors.info && (
+              <InputError error={actionData.errors.info} />
+            )}
           </div>
           <div className="flex flex-col">
             <label htmlFor="date">Date</label>
@@ -171,6 +193,9 @@ export default function RecordDetailsPage() {
                 .toISOString()
                 .substring(0, 10)}
             />
+            {actionData?.errors.date && (
+              <InputError error={actionData.errors.date} />
+            )}
           </div>
           <div className="flex flex-col">
             <label htmlFor="amount">Amount</label>
@@ -183,6 +208,9 @@ export default function RecordDetailsPage() {
               min={0}
               defaultValue={Math.abs(data.record.value)}
             />
+            {actionData?.errors.value && (
+              <InputError error={actionData.errors.value} />
+            )}
           </div>
           <div className="flex flex-col">
             <label htmlFor="categoryId">Category</label>
@@ -200,6 +228,9 @@ export default function RecordDetailsPage() {
                 </option>
               ))}
             </select>
+            {actionData?.errors.categoryId && (
+              <InputError error={actionData.errors.categoryId} />
+            )}
           </div>
           <Button type="submit" className="w-fit">
             Update

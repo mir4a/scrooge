@@ -3,10 +3,23 @@ import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import * as React from "react";
 import Button from "~/components/form/button";
+import InputError from "~/components/form/input-error";
 import { getCategories } from "~/models/category.server";
 
 import { createRecord } from "~/models/record.server";
 import { requireUserId } from "~/session.server";
+
+type ActionData =
+  | {
+      errors: {
+        type: null | string;
+        info: null | string;
+        date: null | string;
+        value: null | string;
+        categoryId: null | string;
+      };
+    }
+  | undefined;
 
 export async function action({ request }: ActionArgs) {
   const userId = await requireUserId(request);
@@ -21,34 +34,42 @@ export async function action({ request }: ActionArgs) {
   const isDateValid =
     date && !(date instanceof File) && /^\d{4}-\d{2}-\d{2}$/.test(date);
 
+  const data: ActionData = {
+    errors: {
+      type: type ? null : "Type is required",
+      info: info ? null : "Name is required",
+      date: date ? null : "Colour is required",
+      value: value ? null : "Value is required",
+      categoryId: categoryId ? null : "Category is required",
+    },
+  };
+
   if (typeof info !== "string" || info.length === 0) {
-    return json(
-      { errors: { name: "info", description: "Info is required" } },
-      { status: 400 }
-    );
+    data.errors.info = "Info is required";
+    return json(data, { status: 400 });
   }
 
   if (!isDateValid) {
-    return json(
-      { errors: { name: "date", description: "Date is required" } },
-      { status: 400 }
-    );
+    data.errors.date = "Date is required";
+    return json(data, { status: 400 });
   }
 
   if (typeof value !== "string" || value.length === 0) {
-    return json(
-      { errors: { name: "value", description: "Value is required" } },
-      { status: 400 }
-    );
+    data.errors.value = "Value is required";
+    return json(data, { status: 400 });
   }
 
-  console.log("categoryId", categoryId);
-
   if (categoryId !== null && typeof categoryId !== "string") {
-    return json(
-      { errors: { name: "category", description: "Category should a string" } },
-      { status: 400 }
-    );
+    data.errors.categoryId = "Category should be a string";
+    return json(data, { status: 400 });
+  }
+
+  const hasErrors = Object.values(data.errors).some(
+    (errorMessage) => errorMessage
+  );
+
+  if (hasErrors) {
+    return json<ActionData>({ errors: data.errors }, { status: 400 });
   }
 
   const correctValue = type === "income" ? value : `-${value}`;
@@ -74,19 +95,22 @@ export async function loader({ request }: LoaderArgs) {
 export default function RecordNewPage() {
   const data = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
+  const typeRef = React.useRef<HTMLLabelElement>(null);
   const infoRef = React.useRef<HTMLTextAreaElement>(null);
   const dateRef = React.useRef<HTMLInputElement>(null);
   const valueRef = React.useRef<HTMLInputElement>(null);
   const categoryRef = React.useRef<HTMLSelectElement>(null);
 
   React.useEffect(() => {
-    if (actionData?.errors?.name === "info") {
+    if (actionData?.errors?.type) {
+      typeRef.current?.focus();
+    } else if (actionData?.errors?.info) {
       infoRef.current?.focus();
-    } else if (actionData?.errors?.name === "date") {
+    } else if (actionData?.errors?.date) {
       dateRef.current?.focus();
-    } else if (actionData?.errors?.name === "value") {
+    } else if (actionData?.errors?.value) {
       valueRef.current?.focus();
-    } else if (actionData?.errors?.name === "category") {
+    } else if (actionData?.errors?.categoryId) {
       categoryRef.current?.focus();
     }
   }, [actionData]);
@@ -96,7 +120,11 @@ export default function RecordNewPage() {
       <div className="flex flex-col space-y-8">
         <div className="flex flex-col space-y-4">
           <span className="font-semibold">Type of record:</span>
-          <label htmlFor="type-income" className="flex w-fit items-center">
+          <label
+            htmlFor="type-income"
+            ref={typeRef}
+            className="flex w-fit items-center"
+          >
             Income
             <input
               type="radio"
@@ -116,10 +144,16 @@ export default function RecordNewPage() {
               className="ml-3"
             />
           </label>
+          {actionData?.errors?.type && (
+            <InputError error={actionData.errors.type} />
+          )}
         </div>
         <div className="flex flex-col">
           <label htmlFor="info">Info</label>
           <textarea id="info" name="info" ref={infoRef} className="Input" />
+          {actionData?.errors.info && (
+            <InputError error={actionData.errors.info} />
+          )}
         </div>
         <div className="flex flex-col">
           <label htmlFor="date">Date</label>
@@ -130,6 +164,9 @@ export default function RecordNewPage() {
             ref={dateRef}
             className="Input"
           />
+          {actionData?.errors.date && (
+            <InputError error={actionData.errors.date} />
+          )}
         </div>
         <div className="flex flex-col">
           <label htmlFor="amount">Amount</label>
@@ -141,6 +178,9 @@ export default function RecordNewPage() {
             className="Input"
             min={0}
           />
+          {actionData?.errors.value && (
+            <InputError error={actionData.errors.value} />
+          )}
         </div>
         <div className="flex flex-col">
           <label htmlFor="categoryId">Category</label>
@@ -157,6 +197,9 @@ export default function RecordNewPage() {
               </option>
             ))}
           </select>
+          {actionData?.errors.categoryId && (
+            <InputError error={actionData.errors.categoryId} />
+          )}
         </div>
         <Button type="submit" kind="primary" className="w-fit">
           Create

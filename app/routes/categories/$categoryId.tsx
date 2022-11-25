@@ -1,10 +1,11 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import * as React from "react";
 import invariant from "tiny-invariant";
 import ColourIndicator from "~/components/category/colour-indicator";
 import Button from "~/components/form/button";
+import InputError from "~/components/form/input-error";
 
 import {
   getCategory,
@@ -15,8 +16,10 @@ import { requireUserId } from "~/session.server";
 
 type ActionData =
   | {
-      name: null | string;
-      color: null | string;
+      errors: {
+        name: null | string;
+        color: null | string;
+      };
     }
   | undefined;
 
@@ -41,20 +44,28 @@ export async function action({ request, params }: ActionArgs) {
 
   invariant(params.categoryId, "categoryId not found");
 
-  const errors: ActionData = {
-    name: name ? null : "Name is required",
-    color: color ? null : "Colour is required",
+  const data: ActionData = {
+    errors: {
+      name: name ? null : "Name is required",
+      color: color ? null : "Colour is required",
+    },
   };
+
+  if (typeof name !== "string") {
+    data.errors.name = "Name should be a string";
+  }
 
   if (method === "DELETE") {
     await deleteCategory({ id: params.categoryId, userId });
     return redirect("/categories");
   }
 
-  const hasErrors = Object.values(errors).some((errorMessage) => errorMessage);
+  const hasErrors = Object.values(data.errors).some(
+    (errorMessage) => errorMessage
+  );
 
   if (hasErrors) {
-    return json<ActionData>(errors);
+    return json<ActionData>({ errors: data.errors }, { status: 400 });
   }
 
   await updateCategory({
@@ -68,6 +79,19 @@ export async function action({ request, params }: ActionArgs) {
 
 export default function CategoryDetailsPage() {
   const data = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
+  const nameRef = React.useRef<HTMLInputElement>(null);
+  const colorRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (actionData?.errors?.name) {
+      nameRef.current?.focus();
+    }
+
+    if (actionData?.errors?.color) {
+      colorRef.current?.focus();
+    }
+  }, [actionData]);
 
   return (
     <div>
@@ -95,8 +119,12 @@ export default function CategoryDetailsPage() {
               type="text"
               className="Input"
               name="name"
+              ref={nameRef}
               defaultValue={data.category.name}
             />
+            {actionData?.errors?.name && (
+              <InputError error={actionData.errors.name} />
+            )}
           </div>
           <div className="flex flex-col">
             <label className="mb-2" htmlFor="color">
@@ -107,6 +135,7 @@ export default function CategoryDetailsPage() {
               id="color"
               className="Input"
               name="color"
+              ref={colorRef}
               defaultValue={data.category.color}
             />
           </div>

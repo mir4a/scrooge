@@ -6,6 +6,16 @@ import { createCategory } from "~/models/category.server";
 
 import { requireUserId } from "~/session.server";
 import Button from "~/components/form/button";
+import InputError from "~/components/form/input-error";
+
+type ActionData =
+  | {
+      errors: {
+        name: null | string;
+        color: null | string;
+      };
+    }
+  | undefined;
 
 export async function action({ request }: ActionArgs) {
   const userId = await requireUserId(request);
@@ -14,23 +24,32 @@ export async function action({ request }: ActionArgs) {
   const name = formData.get("name");
   const color = formData.get("color");
 
-  if (typeof name !== "string" || name.length === 0) {
-    return json(
-      { errors: { name: "name", description: "Name is required" } },
-      { status: 400 }
-    );
+  const data: ActionData = {
+    errors: {
+      name: name ? null : "Name is required",
+      color: color ? null : "Colour is required",
+    },
+  };
+
+  const hasErrors = Object.values(data.errors).some(
+    (errorMessage) => errorMessage
+  );
+
+  if (typeof name !== "string") {
+    data.errors.name = "Name should be a string";
   }
 
-  if (typeof color !== "string" || color.length === 0) {
-    return json(
-      { errors: { name: "color", description: "Color is required" } },
-      { status: 400 }
-    );
+  if (typeof color !== "string") {
+    data.errors.color = "Colour should be a string";
+  }
+
+  if (hasErrors) {
+    return json<ActionData>({ errors: data.errors }, { status: 400 });
   }
 
   const category = await createCategory({
-    name,
-    color,
+    name: name as string,
+    color: color as string,
     userId,
   });
 
@@ -43,11 +62,11 @@ export default function NewCategory() {
   const colorRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
-    if (actionData?.errors.name === "name") {
+    if (actionData?.errors?.name) {
       nameRef.current?.focus();
     }
 
-    if (actionData?.errors.name === "color") {
+    if (actionData?.errors?.color) {
       colorRef.current?.focus();
     }
   }, [actionData]);
@@ -64,6 +83,9 @@ export default function NewCategory() {
             name="name"
             ref={nameRef}
           />
+          {actionData?.errors?.name && (
+            <InputError error={actionData.errors.name} />
+          )}
         </div>
 
         <div className="flex flex-col">
