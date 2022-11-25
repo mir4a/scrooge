@@ -4,8 +4,7 @@ export default function RecordIndexPage() {
   return (
     <p>
       No record selected. Select a record on the left, or{" "}
-      <input type="date" onChange={console.log} />
-      <Link to="new" className="text-blue-500 underline">
+      <Link to="new" className="Link">
         create a new record.
       </Link>
     </p>

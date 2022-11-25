@@ -8,7 +8,9 @@ export interface HeaderProps {
 export default function Header({ username }: HeaderProps) {
   const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
     `p-2 mx-3 border-b-2  hover:border-b-emerald-500 ${
-      isActive ? "border-b border-b-teal-900 " : "border-b-transparent"
+      isActive
+        ? "border-b border-b-teal-900 dark:border-b-teal-400"
+        : "border-b-transparent"
     }`;
 
   return (

@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+
 body {
   font-family: 'Baskerville', serif;
+}
+
+::selection {
+  background-color: theme('colors.teal.600');
+  color: theme('colors.white');
+}
+
+.Link {
+  color: theme('colors.emerald.800');
+  text-decoration-line: underline;
+  text-decoration-thickness: 0.15rem;
+  text-underline-offset: 0.15rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .Link {
+    color: theme('colors.emerald.300');
+  }
 }
