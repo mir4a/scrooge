@@ -26,15 +26,15 @@ export default function Index() {
           <>
             Do I know you?<span className="mx-3 text-3xl">&#128073;</span>{" "}
             <Link to="/login" className="Button Button--primary ml-4 p-2 px-10">
-              Login
+              Log In
             </Link>
             <br />
             <br />
             <br />
             Anyway nice to meet you!{" "}
             <span className="mx-3 text-3xl">&#129309;</span>{" "}
-            <Link to="/signup" className="Button Button--primary p-2 px-10">
-              Signup
+            <Link to="/join" className="Button Button--primary p-2 px-10">
+              Sign Up
             </Link>
           </>
         )}
