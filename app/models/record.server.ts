@@ -24,6 +24,28 @@ export function getRecords({ userId }: { userId: User["id"] }) {
   });
 }
 
+export function getRecordsByDateRange({
+  userId,
+  startDate,
+  endDate,
+}: {
+  userId: User["id"];
+  startDate: string;
+  endDate: string;
+}) {
+  return prisma.record.findMany({
+    where: {
+      userId,
+      date: {
+        gte: new Date(startDate).toISOString(),
+        lte: new Date(endDate).toISOString(),
+      },
+    },
+    include: { category: true },
+    orderBy: { date: "desc" },
+  });
+}
+
 export function getRecordsByCategory({
   userId,
   categoryId,

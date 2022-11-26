@@ -1,6 +1,7 @@
 import type { LoaderArgs } from "@remix-run/node";
 import type { Category as ICategory } from "~/models/category.server";
 import type { Record as IRecord } from "~/models/record.server";
+import { getRecordsByDateRange } from "~/models/record.server";
 import { json } from "@remix-run/node";
 import {
   Form,
@@ -65,15 +66,24 @@ export async function loader({ request }: LoaderArgs) {
     );
   }
 
+  const dateRange = {
+    startDate: startDate || dateNow.toISOString().substring(0, 10),
+    endDate: endDate || endOfMonth.toISOString().substring(0, 10),
+  };
+
   const userId = await requireUserId(request);
   const categories = await getCategories({ userId });
-  const records = await getRecords({ userId });
+  const records = await getRecordsByDateRange({
+    userId,
+    startDate: dateRange.startDate,
+    endDate: dateRange.endDate,
+  });
   const incomes = await getIncomes({ userId });
   const expenses = await getExpensesGroupedByCategory({ userId });
   const allWithinDateRange = await getAllWithinDateRange({
     userId,
-    startDate: startDate || dateNow.toISOString().substring(0, 10),
-    endDate: endDate || endOfMonth.toISOString().substring(0, 10),
+    startDate: dateRange.startDate,
+    endDate: dateRange.endDate,
   });
 
   return json<LoaderData>({
