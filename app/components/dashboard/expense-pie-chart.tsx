@@ -36,8 +36,6 @@ export const ExpensePieChart = (props: ExpensePieChartProps) => {
       : uncategorizedColor,
   }));
 
-  console.log(chartData);
-
   const renderCustomizedLabel = ({
     cx,
     cy,

@@ -7,6 +7,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  Cell,
 } from "recharts";
 
 export interface ExpenseIncomeBarChartProps {
@@ -33,7 +34,12 @@ export default function ExpenseIncomeBarChart({
         <YAxis />
         <Tooltip />
         <Legend />
-        <Bar dataKey="_sum.value" name="transaction amount" fill="#8884d8" />
+        <Bar dataKey="_sum.value" name="transaction amount">
+          {data.map((entry, index) => {
+            const color = entry._sum.value > 0 ? "#48bb78" : "#f56565";
+            return <Cell key={`cell-${index}`} fill={color} />;
+          })}
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
   );
