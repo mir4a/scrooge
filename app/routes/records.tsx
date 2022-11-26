@@ -1,10 +1,12 @@
 import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Form, Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
+import { Link, Outlet, useLoaderData } from "@remix-run/react";
 
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
 import { getRecords } from "~/models/record.server";
+import Header from "~/components/layout/header";
+import RecordTable from "~/components/record/record-table";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
@@ -17,54 +19,28 @@ export default function RecordsPage() {
   const user = useUser();
 
   return (
-    <div className="flex h-full min-h-screen flex-col">
-      <header className="flex items-center justify-between bg-slate-800 p-4 text-white">
-        <h1 className="text-3xl font-bold">
-          <Link to=".">Records</Link>
-        </h1>
-        <p>{user.email}</p>
-        <Form action="/logout" method="post">
-          <button
-            type="submit"
-            className="rounded bg-slate-600 py-2 px-4 text-blue-100 hover:bg-blue-500 active:bg-blue-600"
-          >
-            Logout
-          </button>
-        </Form>
-      </header>
+    <>
+      <Header username={user.email} />
 
-      <main className="flex h-full bg-white">
-        <div className="h-full w-80 border-r bg-gray-50">
-          <Link to="new" className="block p-4 text-xl text-blue-500">
+      <div className="grid grid-cols-12 gap-4 py-8">
+        <div className="col-span-5 col-start-2">
+          <Link
+            to="new"
+            className="Button Button--primary mb-10 block w-fit justify-self-end py-3 px-8 text-center text-xl font-bold"
+          >
             + New Record
           </Link>
-
-          <hr />
 
           {data.records.length === 0 ? (
             <p className="p-4">No records yet</p>
           ) : (
-            <ol>
-              {data.records.map((record) => (
-                <li key={record.id}>
-                  <NavLink
-                    className={({ isActive }) =>
-                      `block border-b p-4 text-xl ${isActive ? "bg-white" : ""}`
-                    }
-                    to={record.id}
-                  >
-                    📝 {record.info}
-                  </NavLink>
-                </li>
-              ))}
-            </ol>
+            <RecordTable records={data.records} />
           )}
         </div>
-
-        <div className="flex-1">
+        <div className="col-span-4 col-start-8">
           <Outlet />
         </div>
-      </main>
-    </div>
+      </div>
+    </>
   );
 }

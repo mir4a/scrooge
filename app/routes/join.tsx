@@ -7,6 +7,8 @@ import { getUserId, createUserSession } from "~/session.server";
 
 import { createUser, getUserByEmail } from "~/models/user.server";
 import { safeRedirect, validateEmail } from "~/utils";
+import Logo from "~/components/layout/logo";
+import Button from "~/components/form/button";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -88,73 +90,63 @@ export default function Join() {
   return (
     <div className="flex min-h-full flex-col justify-center">
       <div className="mx-auto w-full max-w-md px-8">
+        <div className="flex flex-col items-center">
+          <div className="scale-50">
+            <Logo />
+          </div>
+        </div>
         <Form method="post" className="space-y-6">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email address
-            </label>
-            <div className="mt-1">
-              <input
-                ref={emailRef}
-                id="email"
-                required
-                autoFocus={true}
-                name="email"
-                type="email"
-                autoComplete="email"
-                aria-invalid={actionData?.errors?.email ? true : undefined}
-                aria-describedby="email-error"
-                className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
-              />
-              {actionData?.errors?.email && (
-                <div className="pt-1 text-red-700" id="email-error">
-                  {actionData.errors.email}
-                </div>
-              )}
-            </div>
+          <div className="flex flex-col">
+            <label htmlFor="email">Email address</label>
+
+            <input
+              ref={emailRef}
+              id="email"
+              required
+              autoFocus={true}
+              name="email"
+              type="email"
+              autoComplete="email"
+              aria-invalid={actionData?.errors?.email ? true : undefined}
+              aria-describedby="email-error"
+              className="Input"
+            />
+            {actionData?.errors?.email && (
+              <div className="pt-1 text-red-700" id="email-error">
+                {actionData.errors.email}
+              </div>
+            )}
           </div>
 
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
-            <div className="mt-1">
-              <input
-                id="password"
-                ref={passwordRef}
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                aria-invalid={actionData?.errors?.password ? true : undefined}
-                aria-describedby="password-error"
-                className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
-              />
-              {actionData?.errors?.password && (
-                <div className="pt-1 text-red-700" id="password-error">
-                  {actionData.errors.password}
-                </div>
-              )}
-            </div>
+          <div className="flex flex-col">
+            <label htmlFor="password">Password</label>
+
+            <input
+              id="password"
+              ref={passwordRef}
+              name="password"
+              type="password"
+              autoComplete="new-password"
+              aria-invalid={actionData?.errors?.password ? true : undefined}
+              aria-describedby="password-error"
+              className="Input"
+            />
+            {actionData?.errors?.password && (
+              <div className="pt-1 text-red-700" id="password-error">
+                {actionData.errors.password}
+              </div>
+            )}
           </div>
 
           <input type="hidden" name="redirectTo" value={redirectTo} />
-          <button
-            type="submit"
-            className="w-full rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
-          >
+          <Button type="submit" kind="primary" className="w-full">
             Create Account
-          </button>
+          </Button>
           <div className="flex items-center justify-center">
-            <div className="text-center text-sm text-gray-500">
+            <div className="text-center text-sm">
               Already have an account?{" "}
               <Link
-                className="text-blue-500 underline"
+                className="Link"
                 to={{
                   pathname: "/login",
                   search: searchParams.toString(),

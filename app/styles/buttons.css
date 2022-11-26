@@ -1,0 +1,115 @@
+.Button + .Button {
+  margin-left: 1rem;
+}
+
+.Button {
+  color: theme('colors.teal.900');
+  background-color: theme('colors.amber.50');
+  box-shadow: inset theme('colors.teal.900') 0 0 0 1px, theme('colors.white') theme('boxShadow.button.base.default'), theme('colors.teal.900') theme('boxShadow.button.outline.default');
+}
+
+.Button:disabled {
+  color: theme('colors.gray.700');
+  background-color: theme('colors.neutral.200');
+}
+
+.Button:not([disabled]):hover {
+  background-color: theme('colors.amber.100');
+}
+
+.Button:not([disabled]):active {
+  background-color: theme('colors.amber.100');
+  box-shadow: inset theme('colors.teal.900') 0 0 0 1px, theme('colors.white') theme('boxShadow.button.base.active'), theme('colors.teal.900') theme('boxShadow.button.outline.active');
+  transform: translate(2px, 2px);
+}
+
+@media (prefers-color-scheme: dark) {
+  .Button {
+    letter-spacing: 0.05em;
+    font-family: monospace;
+    color: theme('colors.amber.50');
+    background-color: theme('colors.blue.700');
+    box-shadow: theme('colors.blue.900') theme('boxShadow.button.base.default'), theme('colors.blue.300') theme('boxShadow.button.outline.default');
+  }
+
+  .Button:disabled {
+    background-color: theme('colors.neutral.500');
+  }
+
+  .Button:not([disabled]):hover {
+    background-color: theme('colors.blue.600');
+  }
+
+  .Button:not([disabled]):active {
+    background-color: theme('colors.blue.600');
+    box-shadow: theme('colors.blue.900') theme('boxShadow.button.base.active'), theme('colors.blue.300') theme('boxShadow.button.outline.active');
+  }
+}
+
+.Button--primary {
+  color: theme('colors.white');
+  background-color: theme('colors.teal.900');
+  box-shadow: theme('colors.white') theme('boxShadow.button.base.default'), theme('colors.teal.900') theme('boxShadow.button.outline.default');
+}
+
+.Button--primary:not([disabled]):hover {
+  background-color: theme('colors.teal.800');
+}
+
+.Button--primary:not([disabled]):active {
+  background-color: theme('colors.teal.800');
+  box-shadow: theme('colors.white') theme('boxShadow.button.base.active'), theme('colors.emerald.800') theme('boxShadow.button.outline.active');
+  transform: translate(2px, 2px);
+}
+
+@media (prefers-color-scheme: dark) {
+  .Button--primary {
+    color: theme('colors.teal.900');
+    background-color: theme('colors.amber.50');
+    box-shadow: theme('colors.teal.900') theme('boxShadow.button.base.default'), theme('colors.amber.50') theme('boxShadow.button.outline.default');
+  }
+
+  .Button--primary:not([disabled]):hover {
+    background-color: theme('colors.amber.200');
+  }
+
+  .Button--primary:not([disabled]):active {
+    background-color: theme('colors.amber.200');
+    box-shadow: theme('colors.teal.900') theme('boxShadow.button.base.active'), theme('colors.amber.50') theme('boxShadow.button.outline.active');
+    transform: translate(2px, 2px);
+  }
+}
+
+.Button--secondary {
+  color: theme('colors.white');
+  background-color: theme('colors.amber.600');
+  box-shadow: theme('colors.white') theme('boxShadow.button.base.default'), theme('colors.amber.600') theme('boxShadow.button.outline.default');
+}
+
+.Button--secondary:not([disabled]):hover {
+  background-color: theme('colors.amber.500');
+}
+
+.Button--secondary:not([disabled]):active {
+  background-color: theme('colors.amber.500');
+  box-shadow: theme('colors.white') theme('boxShadow.button.base.active'), theme('colors.amber.500') theme('boxShadow.button.outline.active');
+  transform: translate(2px, 2px);
+}
+
+@media (prefers-color-scheme: dark) {
+  .Button--secondary {
+    color: theme('colors.amber.50');
+    background-color: theme('colors.pink.500');
+    box-shadow: theme('colors.pink.800') theme('boxShadow.button.base.default'), theme('colors.amber.50') theme('boxShadow.button.outline.default');
+  }
+
+  .Button--secondary:not([disabled]):hover {
+    background-color: theme('colors.pink.400');
+  }
+
+  .Button--secondary:not([disabled]):active {
+    background-color: theme('colors.pink.400');
+    box-shadow: theme('colors.pink.800') theme('boxShadow.button.base.active'), theme('colors.amber.50') theme('boxShadow.button.outline.active');
+    transform: translate(2px, 2px);
+  }
+}

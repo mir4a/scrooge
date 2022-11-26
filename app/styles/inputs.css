@@ -1,0 +1,27 @@
+.Input {
+  @apply border border-2 border-stone-400 p-2;
+  box-shadow: theme('colors.stone.400') 2px 2px 0 1px;
+}
+
+.Input[type="color"] {
+  min-width: 5rem;
+  min-height: 5rem;
+}
+
+.Input:focus {
+  @apply border-teal-900;
+  box-shadow: theme('colors.teal.900') 2px 2px 0 1px;
+  outline: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .Input {
+    @apply bg-stone-800;
+  }
+
+  .Input:focus {
+    @apply border-emerald-400;
+    box-shadow: theme('colors.emerald.400') 2px 2px 0 1px;
+  }
+}
+ 

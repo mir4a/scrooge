@@ -5,6 +5,17 @@ import * as React from "react";
 import { createCategory } from "~/models/category.server";
 
 import { requireUserId } from "~/session.server";
+import Button from "~/components/form/button";
+import InputError from "~/components/form/input-error";
+
+type ActionData =
+  | {
+      errors: {
+        name: null | string;
+        color: null | string;
+      };
+    }
+  | undefined;
 
 export async function action({ request }: ActionArgs) {
   const userId = await requireUserId(request);
@@ -13,23 +24,32 @@ export async function action({ request }: ActionArgs) {
   const name = formData.get("name");
   const color = formData.get("color");
 
-  if (typeof name !== "string" || name.length === 0) {
-    return json(
-      { errors: { name: "name", description: "Name is required" } },
-      { status: 400 }
-    );
+  const data: ActionData = {
+    errors: {
+      name: name ? null : "Name is required",
+      color: color ? null : "Colour is required",
+    },
+  };
+
+  const hasErrors = Object.values(data.errors).some(
+    (errorMessage) => errorMessage
+  );
+
+  if (typeof name !== "string") {
+    data.errors.name = "Name should be a string";
   }
 
-  if (typeof color !== "string" || color.length === 0) {
-    return json(
-      { errors: { name: "color", description: "Color is required" } },
-      { status: 400 }
-    );
+  if (typeof color !== "string") {
+    data.errors.color = "Colour should be a string";
+  }
+
+  if (hasErrors) {
+    return json<ActionData>({ errors: data.errors }, { status: 400 });
   }
 
   const category = await createCategory({
-    name,
-    color,
+    name: name as string,
+    color: color as string,
     userId,
   });
 
@@ -42,41 +62,47 @@ export default function NewCategory() {
   const colorRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
-    if (actionData?.errors.name === "name") {
+    if (actionData?.errors?.name) {
       nameRef.current?.focus();
     }
 
-    if (actionData?.errors.name === "color") {
+    if (actionData?.errors?.color) {
       colorRef.current?.focus();
     }
   }, [actionData]);
 
   return (
     <Form method="post">
-      <div className="flex flex-col space-y-4">
-        <div className="flex flex-col space-y-1">
-          <label htmlFor="name">Name</label>
+      <div className="flex flex-col space-y-8">
+        <div className="flex flex-col">
+          <label htmlFor="name">Category name</label>
           <input
             id="name"
-            name="name"
             type="text"
+            className="Input"
+            name="name"
             ref={nameRef}
-            className="rounded-md border border-gray-300 px-2 py-1"
           />
+          {actionData?.errors?.name && (
+            <InputError error={actionData.errors.name} />
+          )}
         </div>
-        <div className="flex flex-col space-y-1">
+
+        <div className="flex flex-col">
           <label htmlFor="color">Color</label>
           <input
             id="color"
+            className="Input"
             name="color"
             type="color"
             ref={colorRef}
-            className="rounded-md border border-gray-300 px-2 py-1"
+            defaultValue="#134e4a"
           />
         </div>
-        <button type="submit" className="btn">
+
+        <Button type="submit" kind="primary" className="w-fit">
           Create
-        </button>
+        </Button>
       </div>
     </Form>
   );

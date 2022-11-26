@@ -19,7 +19,29 @@ export function getRecord({
 export function getRecords({ userId }: { userId: User["id"] }) {
   return prisma.record.findMany({
     where: { userId },
-    select: { id: true, info: true, date: true, value: true, category: true },
+    include: { category: true },
+    orderBy: { date: "desc" },
+  });
+}
+
+export function getRecordsByDateRange({
+  userId,
+  startDate,
+  endDate,
+}: {
+  userId: User["id"];
+  startDate: string;
+  endDate: string;
+}) {
+  return prisma.record.findMany({
+    where: {
+      userId,
+      date: {
+        gte: new Date(startDate).toISOString(),
+        lte: new Date(endDate).toISOString(),
+      },
+    },
+    include: { category: true },
     orderBy: { date: "desc" },
   });
 }
@@ -129,6 +151,33 @@ export function getIncomes({ userId }: { userId: User["id"] }) {
   return prisma.record.findMany({
     where: { userId, value: { gt: 0 } },
     select: { id: true, info: true, date: true, value: true, category: true },
+    orderBy: { date: "desc" },
+  });
+}
+
+export function getAllWithinDateRange({
+  userId,
+  startDate,
+  endDate,
+}: {
+  userId: User["id"];
+  startDate: string;
+  endDate: string;
+}) {
+  return prisma.record.groupBy({
+    where: {
+      userId,
+      date: {
+        gte: new Date(startDate).toISOString(),
+        lte: new Date(endDate).toISOString(),
+      },
+    },
+    by: ["date"],
+    _count: {
+      _all: true,
+      value: true,
+    },
+    _sum: { value: true },
     orderBy: { date: "desc" },
   });
 }
