@@ -27,7 +27,7 @@ export async function loader({ request }: LoaderArgs) {
   const allWithinDateRange = await getAllWithinDateRange({
     userId,
     startDate: "2021-01-01",
-    endDate: "2021-12-31",
+    endDate: "2022-12-31",
   });
 
   return json({ categories, records, incomes, expenses, allWithinDateRange });
