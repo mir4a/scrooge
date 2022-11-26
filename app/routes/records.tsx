@@ -1,12 +1,11 @@
 import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
+import { Link, Outlet, useLoaderData } from "@remix-run/react";
 
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
 import { getRecords } from "~/models/record.server";
 import Header from "~/components/layout/header";
-import MainLayout from "~/components/layout/main";
 import RecordTable from "~/components/record/record-table";
 
 export async function loader({ request }: LoaderArgs) {
