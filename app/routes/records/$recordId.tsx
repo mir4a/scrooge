@@ -152,6 +152,7 @@ export default function RecordDetailsPage() {
                 id="type-income"
                 value="income"
                 className="ml-3"
+                key={data.record.id}
                 defaultChecked={data.record.value > 0}
               />
             </label>
@@ -163,6 +164,7 @@ export default function RecordDetailsPage() {
                 id="type-expense"
                 value="expense"
                 className="ml-3"
+                key={data.record.id}
                 defaultChecked={data.record.value < 0}
               />
             </label>
@@ -189,6 +191,7 @@ export default function RecordDetailsPage() {
               type="date"
               ref={dateRef}
               className="Input"
+              key={data.record.id}
               defaultValue={new Date(data.record.date)
                 .toISOString()
                 .substring(0, 10)}
@@ -205,6 +208,7 @@ export default function RecordDetailsPage() {
               type="number"
               ref={valueRef}
               className="Input"
+              key={data.record.id}
               min={0}
               defaultValue={Math.abs(data.record.value)}
             />
@@ -219,6 +223,7 @@ export default function RecordDetailsPage() {
               name="categoryId"
               ref={categoryRef}
               className="Input"
+              key={data.record.id}
               defaultValue={data.record.category?.id}
             >
               <option value="">not selected</option>

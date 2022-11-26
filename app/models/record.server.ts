@@ -132,3 +132,30 @@ export function getIncomes({ userId }: { userId: User["id"] }) {
     orderBy: { date: "desc" },
   });
 }
+
+export function getAllWithinDateRange({
+  userId,
+  startDate,
+  endDate,
+}: {
+  userId: User["id"];
+  startDate: string;
+  endDate: string;
+}) {
+  return prisma.record.groupBy({
+    where: {
+      userId,
+      date: {
+        gte: new Date(startDate).toISOString(),
+        lte: new Date(endDate).toISOString(),
+      },
+    },
+    by: ["date"],
+    _count: {
+      _all: true,
+      value: true,
+    },
+    _sum: { value: true },
+    orderBy: { date: "desc" },
+  });
+}

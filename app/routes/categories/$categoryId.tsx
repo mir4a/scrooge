@@ -118,6 +118,7 @@ export default function CategoryDetailsPage() {
               id="name"
               type="text"
               className="Input"
+              key={data.category.id}
               name="name"
               ref={nameRef}
               defaultValue={data.category.name}
@@ -133,6 +134,7 @@ export default function CategoryDetailsPage() {
             <input
               type="color"
               id="color"
+              key={data.category.id}
               className="Input"
               name="color"
               ref={colorRef}

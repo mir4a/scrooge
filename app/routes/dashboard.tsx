@@ -2,6 +2,7 @@ import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import CategoryListItem from "~/components/category/category-list-item";
+import ExpenseIncomeBarChart from "~/components/dashboard/expense-income-bar-chart";
 import { ExpensePieChart } from "~/components/dashboard/expense-pie-chart";
 import Header from "~/components/layout/header";
 import MainLayout from "~/components/layout/main";
@@ -12,6 +13,7 @@ import {
   getExpensesGroupedByCategory,
   getIncomes,
   getRecords,
+  getAllWithinDateRange,
 } from "~/models/record.server";
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
@@ -22,8 +24,13 @@ export async function loader({ request }: LoaderArgs) {
   const records = await getRecords({ userId });
   const incomes = await getIncomes({ userId });
   const expenses = await getExpensesGroupedByCategory({ userId });
+  const allWithinDateRange = await getAllWithinDateRange({
+    userId,
+    startDate: "2021-01-01",
+    endDate: "2021-12-31",
+  });
 
-  return json({ categories, records, incomes, expenses });
+  return json({ categories, records, incomes, expenses, allWithinDateRange });
 }
 
 export default function Dashboard() {
@@ -41,7 +48,9 @@ export default function Dashboard() {
               categories={data.categories}
             />
           </div>
-          <div className="col-span-4">another chart</div>
+          <div className="col-span-4">
+            <ExpenseIncomeBarChart data={data.allWithinDateRange} />
+          </div>
         </div>
         <div className="grid-cols-16 grid gap-4">
           <div className="col-span-6">
