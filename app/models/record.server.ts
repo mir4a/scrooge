@@ -48,6 +48,8 @@ export function getRecords({ userId }: { userId: User["id"] }) {
 // 3.2. do we go to the previous page?
 // 3.2.1. cursor is the first record id
 // 3.2.2. skip 1 record (the first one)
+// TODO: refactor pagination logic into a separate function
+export const MAX_RECORDS_PER_PAGE = 100;
 export async function getRecordsByDateRange({
   userId,
   startDate,
@@ -75,12 +77,19 @@ export async function getRecordsByDateRange({
       ...predicate,
     },
   });
-  const pagesTotal = Math.ceil(recordsTotal / Math.abs(Number(limit)));
   const parsedPage = Number(page);
+  const parsedLimit = Number(limit);
+  const isBackward = Number(limit) < 0;
+  const isLimitSafe = Math.abs(parsedLimit) <= MAX_RECORDS_PER_PAGE;
+  const safeLimit = isLimitSafe
+    ? parsedLimit
+    : isBackward
+    ? -MAX_RECORDS_PER_PAGE
+    : MAX_RECORDS_PER_PAGE;
+  const pagesTotal = Math.ceil(recordsTotal / Math.abs(Number(safeLimit)));
 
   const isFirstPage = parsedPage === 1;
   const isInitialPage = parsedPage === 0;
-  const isBackward = Number(limit) < 0;
   const isLastPage = parsedPage >= pagesTotal;
   const isWeirdPageAndNoCursor = (parsedPage > 1 || parsedPage < 0) && !cursor;
   const skip =
@@ -105,7 +114,7 @@ export async function getRecordsByDateRange({
   });
 
   const records = await prisma.record.findMany({
-    take: Number(limit),
+    take: Number(safeLimit),
     skip,
     cursor: cursor ? { id: cursor } : undefined,
     where: {

@@ -30,6 +30,7 @@ import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
 import {
   Pagination,
+  PaginationIndicator,
   PaginationNext,
   PaginationPrev,
 } from "~/components/pagination";
@@ -138,6 +139,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   const handlePagination = (newPage: number) => {
+    // TODO: custom hook for this
     const parsedLimit = parseInt(limit, 10);
     const isOverrun = newPage > data.pagesTotal;
     const isWeirdPageAndNoCursor = (page < 0 || page > 1) && !cursor;
@@ -167,11 +169,6 @@ export default function Dashboard() {
     });
     formData.set("cursor", calculatedCursor);
     formData.set("limit", String(calculatedLimit));
-    // if (newPage === 1) {
-    //   formData.delete("page");
-    // } else {
-    //   formData.set("page", String(newPage));
-    // }
 
     if (isOverrun) {
       formData.set("page", String(data.pagesTotal));
@@ -261,12 +258,15 @@ export default function Dashboard() {
               onChangePage={handlePagination}
               totalPages={data.pagesTotal}
             >
-              <PaginationNext />
-              <EntriesPerPage
-                onChange={handleEntriesPerPage}
-                limit={Number(limit)}
-              />
-              <PaginationPrev />
+              <div className="flex items-center space-x-4">
+                <PaginationPrev />
+                <PaginationIndicator />
+                <PaginationNext />
+                <EntriesPerPage
+                  onChange={handleEntriesPerPage}
+                  limit={Number(limit)}
+                />
+              </div>
             </Pagination>
           </div>
         </div>
