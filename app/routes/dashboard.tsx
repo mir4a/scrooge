@@ -1,4 +1,3 @@
-import * as React from "react";
 import type { LoaderArgs } from "@remix-run/node";
 import type { Category as ICategory } from "~/models/category.server";
 import type { Record as IRecord } from "~/models/record.server";

@@ -24,7 +24,11 @@
 // 3.2.2. skip 1 record (the first one)
 // TODO: refactor pagination logic into a separate function
 
-import { MAX_RECORDS_PER_PAGE } from "./pagination-const";
+import {
+  DEFAULT_RECORDS_PER_PAGE,
+  MAX_RECORDS_PER_PAGE,
+  PaginationTerms,
+} from "./pagination-const";
 
 interface PaginationHelperArgs {
   total: number;
@@ -75,5 +79,24 @@ export default function paginationHelper({
     take: Number(safeLimit),
     hasNextPage: !isLastPage,
     hasPreviousPage: !isFirstPage,
+  };
+}
+
+export function getPaginationTermsFromURL(url: string): {
+  page: string | null;
+  limit: string;
+  cursor: string | null;
+} {
+  const urlObject = new URL(url);
+  const searchParams = urlObject.searchParams;
+  const page = searchParams.get(PaginationTerms.PAGE);
+  const limit =
+    searchParams.get(PaginationTerms.LIMIT) ?? String(DEFAULT_RECORDS_PER_PAGE);
+  const cursor = searchParams.get(PaginationTerms.CURSOR);
+
+  return {
+    page,
+    limit,
+    cursor,
   };
 }
