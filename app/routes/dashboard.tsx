@@ -257,6 +257,7 @@ export default function Dashboard() {
               page={Number(page)}
               onChangePage={handlePagination}
               totalPages={data.pagesTotal}
+              className="mt-8"
             >
               <div className="flex items-center space-x-4">
                 <PaginationPrev />
