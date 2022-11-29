@@ -18,6 +18,7 @@ export type PaginationResult = [
   {
     page: number;
     limit: number;
+    totalPages: number;
     cursor?: string | null;
     error?: Error | null;
   },
@@ -64,5 +65,8 @@ export default function usePagination({
     submit(formData);
   };
 
-  return [{ page: parsedPage, limit: parsedLimit, cursor }, callback];
+  return [
+    { page: parsedPage, limit: parsedLimit, cursor, totalPages },
+    callback,
+  ];
 }
