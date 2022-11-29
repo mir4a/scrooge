@@ -34,7 +34,7 @@ export default function RecordsPage() {
   const data = useLoaderData<typeof loader>();
   const user = useUser();
 
-  const [{ limit, page }, paginationCallback] = usePagination({
+  const [{ page }, paginationCallback] = usePagination({
     data: data.records,
     total: data.recordsTotal,
   });
