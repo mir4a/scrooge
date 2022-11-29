@@ -1,11 +1,11 @@
-export interface ButtonProps {
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   kind?: "primary" | "secondary" | "tertiary";
   size?: "small" | "medium" | "large";
   type?: "button" | "submit" | "reset";
   onClick?: () => void;
   className?: string;
-  buttonProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
 }
 
 export default function Button({
@@ -15,7 +15,7 @@ export default function Button({
   type = "button",
   onClick,
   className,
-  buttonProps,
+  ...props
 }: ButtonProps) {
   const buttonClasses = {
     primary: {
@@ -38,7 +38,7 @@ export default function Button({
   return (
     <button
       type={type}
-      {...buttonProps}
+      {...props}
       onClick={onClick}
       className={`${buttonClasses[kind][size]} ${
         className ?? ""

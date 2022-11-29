@@ -1,3 +1,4 @@
+import * as React from "react";
 import type { LoaderArgs } from "@remix-run/node";
 import type { Category as ICategory } from "~/models/category.server";
 import type { Record as IRecord } from "~/models/record.server";
@@ -5,9 +6,10 @@ import { getRecordsByDateRange } from "~/models/record.server";
 import { json } from "@remix-run/node";
 import {
   Form,
-  useCatch,
   useLoaderData,
+  useNavigate,
   useSearchParams,
+  useSubmit,
 } from "@remix-run/react";
 
 import CategoryListItem from "~/components/category/category-list-item";
@@ -22,25 +24,37 @@ import { getCategories } from "~/models/category.server";
 import {
   getExpensesGroupedByCategory,
   getIncomes,
-  getRecords,
   getAllWithinDateRange,
 } from "~/models/record.server";
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
+import {
+  Pagination,
+  PaginationNext,
+  PaginationPrev,
+} from "~/components/pagination";
+import EntriesPerPage from "~/components/entries-per-page";
 
 export type LoaderData = {
   categories: Pick<ICategory, "id" | "color" | "name">[];
   records: IRecord[];
   expenses: any[];
   incomes: any[];
+  recordsTotal: number;
+  pagesTotal: number;
   allWithinDateRange: any[];
   error?: string;
 };
+
+export const DEFAULT_ENTRIES_PER_PAGE_LIMIT = "10";
 
 export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
   const startDate = url.searchParams.get("startDate");
   const endDate = url.searchParams.get("endDate");
+  const cursor = url.searchParams.get("cursor");
+  const limit = url.searchParams.get("limit") ?? DEFAULT_ENTRIES_PER_PAGE_LIMIT;
+  const page = url.searchParams.get("page");
   const dateNow = new Date();
   dateNow.setUTCHours(0, 0, 0, 0);
   dateNow.setUTCDate(1);
@@ -59,6 +73,8 @@ export async function loader({ request }: LoaderArgs) {
         categories: [],
         expenses: [],
         records: [],
+        recordsTotal: 0,
+        pagesTotal: 0,
         incomes: [],
         allWithinDateRange: [],
       },
@@ -73,10 +89,13 @@ export async function loader({ request }: LoaderArgs) {
 
   const userId = await requireUserId(request);
   const categories = await getCategories({ userId });
-  const records = await getRecordsByDateRange({
+  const { records, recordsTotal, pagesTotal } = await getRecordsByDateRange({
     userId,
     startDate: dateRange.startDate,
     endDate: dateRange.endDate,
+    cursor,
+    limit,
+    page,
   });
   const incomes = await getIncomes({ userId });
   const expenses = await getExpensesGroupedByCategory({ userId });
@@ -90,18 +109,85 @@ export async function loader({ request }: LoaderArgs) {
     error: undefined,
     categories,
     records,
+    recordsTotal,
+    pagesTotal,
     incomes,
     expenses,
     allWithinDateRange,
   });
 }
 
+export function queryToFormData(query: URLSearchParams) {
+  const formData = new FormData();
+  for (const [key, value] of query) {
+    formData.set(key, value);
+  }
+  return formData;
+}
+
 export default function Dashboard() {
   const data = useLoaderData<typeof loader>();
   const user = useUser();
   const [searchParams] = useSearchParams();
+  const page = searchParams.get("page") ?? 1;
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
+  const cursor = searchParams.get("cursor");
+  const limit = searchParams.get("limit") ?? DEFAULT_ENTRIES_PER_PAGE_LIMIT;
+  const submit = useSubmit();
+  const navigate = useNavigate();
+
+  const handlePagination = (newPage: number) => {
+    const parsedLimit = parseInt(limit, 10);
+    const isOverrun = newPage > data.pagesTotal;
+    const isWeirdPageAndNoCursor = (page < 0 || page > 1) && !cursor;
+    if (isOverrun || isWeirdPageAndNoCursor) {
+      return navigate("/dashboard");
+    }
+    // existing query params to FormData
+    const formData = queryToFormData(searchParams);
+    const isBackward = newPage < Number(page);
+    const calculatedLimit = isBackward
+      ? -Math.abs(parsedLimit)
+      : Math.abs(parsedLimit);
+    const calculatedCursor =
+      isBackward || isOverrun
+        ? data.records[0].id
+        : data.records[data.records.length - 1].id;
+    // update form data with new cursor
+    console.log({
+      newPage,
+      isBackward,
+      page,
+      parsedLimit,
+      limit,
+      calculatedLimit,
+      'get("limit")': searchParams.get("limit"),
+      'get("page")': searchParams.get("page"),
+    });
+    formData.set("cursor", calculatedCursor);
+    formData.set("limit", String(calculatedLimit));
+    // if (newPage === 1) {
+    //   formData.delete("page");
+    // } else {
+    //   formData.set("page", String(newPage));
+    // }
+
+    if (isOverrun) {
+      formData.set("page", String(data.pagesTotal));
+    } else {
+      formData.set("page", String(newPage));
+    }
+    submit(formData);
+  };
+
+  const handleEntriesPerPage = (newEntriesPerPage: number) => {
+    // existing query params to FormData
+    const formData = queryToFormData(searchParams);
+    // update form data with new cursor
+    formData.set("limit", String(newEntriesPerPage));
+    submit(formData);
+  };
 
   return (
     <>
@@ -170,6 +256,18 @@ export default function Dashboard() {
             </div>
             <h2 className="mb-8 text-xl font-bold">All records</h2>
             <RecordTable records={data.records} />
+            <Pagination
+              page={Number(page)}
+              onChangePage={handlePagination}
+              totalPages={data.pagesTotal}
+            >
+              <PaginationNext />
+              <EntriesPerPage
+                onChange={handleEntriesPerPage}
+                limit={Number(limit)}
+              />
+              <PaginationPrev />
+            </Pagination>
           </div>
         </div>
       </MainLayout>
