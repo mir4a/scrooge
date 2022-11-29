@@ -1,5 +1,4 @@
 import type { User, Record } from "@prisma/client";
-import { parse } from "path";
 
 import { prisma } from "~/db.server";
 
