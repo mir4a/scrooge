@@ -7,7 +7,6 @@ import { json } from "@remix-run/node";
 import {
   Form,
   useLoaderData,
-  useNavigate,
   useSearchParams,
   useSubmit,
 } from "@remix-run/react";
@@ -33,8 +32,12 @@ import {
   PaginationIndicator,
   PaginationNext,
   PaginationPrev,
+  usePagination,
 } from "~/components/pagination";
 import EntriesPerPage from "~/components/entries-per-page";
+import { queryToFormData } from "~/utils/query-to-form-data";
+import { getPaginationTermsFromURL } from "~/utils/pagination-helper.server";
+import { PaginationTerms } from "~/utils/pagination-const";
 
 export type LoaderData = {
   categories: Pick<ICategory, "id" | "color" | "name">[];
@@ -47,15 +50,11 @@ export type LoaderData = {
   error?: string;
 };
 
-export const DEFAULT_ENTRIES_PER_PAGE_LIMIT = "10";
-
 export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
   const startDate = url.searchParams.get("startDate");
   const endDate = url.searchParams.get("endDate");
-  const cursor = url.searchParams.get("cursor");
-  const limit = url.searchParams.get("limit") ?? DEFAULT_ENTRIES_PER_PAGE_LIMIT;
-  const page = url.searchParams.get("page");
+  const { cursor, limit, page } = getPaginationTermsFromURL(request.url);
   const dateNow = new Date();
   dateNow.setUTCHours(0, 0, 0, 0);
   dateNow.setUTCDate(1);
@@ -118,71 +117,25 @@ export async function loader({ request }: LoaderArgs) {
   });
 }
 
-export function queryToFormData(query: URLSearchParams) {
-  const formData = new FormData();
-  for (const [key, value] of query) {
-    formData.set(key, value);
-  }
-  return formData;
-}
-
 export default function Dashboard() {
   const data = useLoaderData<typeof loader>();
   const user = useUser();
   const [searchParams] = useSearchParams();
-  const page = searchParams.get("page") ?? 1;
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
-  const cursor = searchParams.get("cursor");
-  const limit = searchParams.get("limit") ?? DEFAULT_ENTRIES_PER_PAGE_LIMIT;
+
+  const [{ limit, page }, paginationCallback] = usePagination({
+    data: data.records,
+    total: data.recordsTotal,
+  });
+
   const submit = useSubmit();
-  const navigate = useNavigate();
-
-  const handlePagination = (newPage: number) => {
-    // TODO: custom hook for this
-    const parsedLimit = parseInt(limit, 10);
-    const isOverrun = newPage > data.pagesTotal;
-    const isWeirdPageAndNoCursor = (page < 0 || page > 1) && !cursor;
-    if (isOverrun || isWeirdPageAndNoCursor) {
-      return navigate("/dashboard");
-    }
-    // existing query params to FormData
-    const formData = queryToFormData(searchParams);
-    const isBackward = newPage < Number(page);
-    const calculatedLimit = isBackward
-      ? -Math.abs(parsedLimit)
-      : Math.abs(parsedLimit);
-    const calculatedCursor =
-      isBackward || isOverrun
-        ? data.records[0].id
-        : data.records[data.records.length - 1].id;
-    // update form data with new cursor
-    console.log({
-      newPage,
-      isBackward,
-      page,
-      parsedLimit,
-      limit,
-      calculatedLimit,
-      'get("limit")': searchParams.get("limit"),
-      'get("page")': searchParams.get("page"),
-    });
-    formData.set("cursor", calculatedCursor);
-    formData.set("limit", String(calculatedLimit));
-
-    if (isOverrun) {
-      formData.set("page", String(data.pagesTotal));
-    } else {
-      formData.set("page", String(newPage));
-    }
-    submit(formData);
-  };
 
   const handleEntriesPerPage = (newEntriesPerPage: number) => {
     // existing query params to FormData
     const formData = queryToFormData(searchParams);
     // update form data with new cursor
-    formData.set("limit", String(newEntriesPerPage));
+    formData.set(PaginationTerms.LIMIT, String(newEntriesPerPage));
     submit(formData);
   };
 
@@ -255,7 +208,7 @@ export default function Dashboard() {
             <RecordTable records={data.records} />
             <Pagination
               page={Number(page)}
-              onChangePage={handlePagination}
+              onChangePage={paginationCallback}
               totalPages={data.pagesTotal}
               className="mt-8"
             >

@@ -23,8 +23,8 @@
 // 3.2.1. cursor is the first record id
 // 3.2.2. skip 1 record (the first one)
 // TODO: refactor pagination logic into a separate function
-export const MAX_RECORDS_PER_PAGE = 100;
-export const DEFAULT_RECORDS_PER_PAGE = 10;
+
+import { MAX_RECORDS_PER_PAGE } from "./pagination-const";
 
 interface PaginationHelperArgs {
   total: number;

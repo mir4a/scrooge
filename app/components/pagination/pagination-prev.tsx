@@ -1,9 +1,8 @@
-import * as React from "react";
 import Button from "../form/button";
-import { PaginationContext } from "./pagination-context";
+import usePaginationContext from "./use-pagination-context";
 
 export default function PaginationPrev() {
-  const { page, onChangePage } = React.useContext(PaginationContext);
+  const { page, onChangePage } = usePaginationContext();
   const disabled = page === 1;
   return (
     <Button

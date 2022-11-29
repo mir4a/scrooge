@@ -1,10 +1,8 @@
-import * as React from "react";
 import Button from "../form/button";
-import { PaginationContext } from "./pagination-context";
+import usePaginationContext from "./use-pagination-context";
 
 export default function PaginationNext() {
-  const { page, onChangePage, totalPages } =
-    React.useContext(PaginationContext);
+  const { page, onChangePage, totalPages } = usePaginationContext();
   const disabled = page === totalPages;
 
   return (
