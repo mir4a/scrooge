@@ -24,9 +24,9 @@ export default function CategoryListItem({ category }: CategoryListItemProps) {
         to={`/categories/${id}`}
       >
         <ColourIndicator colour={color} className="mr-4" />
-        <span className="group-hover:underline group-hover:decoration-2">
+        <p className="shrink grow-0 overflow-hidden text-ellipsis group-hover:underline group-hover:decoration-2">
           {name}
-        </span>
+        </p>
       </NavLink>
     </li>
   );

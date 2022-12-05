@@ -44,7 +44,7 @@ export default function RecordRow({
           </div>
         )}
       </div>
-      <div className="table-cell border-b border-slate-100 p-4 text-slate-500 dark:border-slate-700 dark:text-slate-400">
+      <div className="table-cell overflow-hidden text-ellipsis border-b border-slate-100 p-4 text-slate-500 dark:border-slate-700 dark:text-slate-400">
         {record.info}
       </div>
       <div className="table-cell border-b border-slate-100 p-4 pr-8 text-slate-500 dark:border-slate-700 dark:text-slate-400">

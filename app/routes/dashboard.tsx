@@ -153,8 +153,8 @@ export default function Dashboard() {
             <ExpenseIncomeBarChart data={data.allWithinDateRange} />
           </div>
         </div>
-        <div className="grid-cols-16 grid gap-4">
-          <div className="col-span-6">
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-4">
             <h2 className="text-xl font-bold">Categories</h2>
             <small className="text-gray-500 dark:text-stone-300">
               select to edit or delete
@@ -166,7 +166,7 @@ export default function Dashboard() {
             </ul>
           </div>
 
-          <div className="col-span-9 col-start-8">
+          <div className="col-span-7 col-start-6">
             <div className="my-5 border-y-2 py-4 dark:border-stone-700">
               {data.error && (
                 <div className="my-5 bg-red-500 p-4 text-white dark:bg-pink-500">

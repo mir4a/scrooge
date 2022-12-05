@@ -96,9 +96,11 @@ export default function CategoryDetailsPage() {
   return (
     <div>
       <div className="flex justify-between">
-        <h3 className="flex items-center text-2xl font-bold">
-          <ColourIndicator colour={data.category.color} className="mr-4" />
-          {data.category.name}
+        <h3 className="mr-2 flex shrink grow-0 items-center overflow-hidden text-2xl font-bold">
+          <ColourIndicator colour={data.category.color} className="mr-4 ml-1" />
+          <span className="shrink grow-0 overflow-hidden text-ellipsis">
+            {data.category.name}{" "}
+          </span>
         </h3>
         <Form method="post">
           <input type="hidden" name="_method" value="DELETE" />
