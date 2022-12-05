@@ -22,7 +22,6 @@
 // 3.2. do we go to the previous page?
 // 3.2.1. cursor is the first record id
 // 3.2.2. skip 1 record (the first one)
-// TODO: refactor pagination logic into a separate function
 
 import {
   DEFAULT_RECORDS_PER_PAGE,

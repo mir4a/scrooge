@@ -59,6 +59,8 @@ export default function usePagination({
 
     if (isOverrun) {
       formData.set(PaginationTerms.PAGE, String(totalPages));
+    } else if (newPage < 1) {
+      formData.set(PaginationTerms.PAGE, "1");
     } else {
       formData.set(PaginationTerms.PAGE, String(newPage));
     }
