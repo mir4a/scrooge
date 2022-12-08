@@ -28,6 +28,7 @@ import {
   MAX_RECORDS_PER_PAGE,
   PaginationTerms,
 } from "./pagination-const";
+import parseNumber from "./parse-number";
 
 interface PaginationHelperArgs {
   total: number;
@@ -50,9 +51,10 @@ export default function paginationHelper({
   limit,
   page,
 }: PaginationHelperArgs): PaginationHelperResult {
-  const parsedPage = Number(page);
-  const parsedLimit = Number(limit);
-  const isBackward = Number(limit) < 0;
+  const parsedPage = parseNumber(page);
+  const parsedLimit = parseNumber(limit);
+  const isBackward = parsedLimit < 0;
+  const isOnlyLimit = parsedPage <= 0 && limit;
   const isLimitSafe = Math.abs(parsedLimit) <= MAX_RECORDS_PER_PAGE;
   const safeLimit = isLimitSafe
     ? parsedLimit
@@ -60,22 +62,30 @@ export default function paginationHelper({
     ? -MAX_RECORDS_PER_PAGE
     : MAX_RECORDS_PER_PAGE;
   const pagesTotal = Math.ceil(total / Math.abs(Number(safeLimit)));
-
-  const isFirstPage = parsedPage === 1;
-  const isInitialPage = parsedPage === 0;
+  const isFirstPage = parsedPage === 1 || parsedPage <= 0;
   const isLastPage = parsedPage >= pagesTotal;
-  const isWeirdPageAndNoCursor = (parsedPage > 1 || parsedPage < 0) && !cursor;
+
   const skip =
-    (isInitialPage && !isBackward) ||
-    isWeirdPageAndNoCursor ||
-    (isLastPage && !isBackward)
-      ? 0
-      : 1;
+    (isFirstPage && isBackward) || (isLastPage && !isBackward) ? 0 : 1;
+
+  // no cursor or no page fallback to the first page
+  if (!cursor || !page) {
+    return {
+      skip: 0,
+      take: Math.abs(safeLimit),
+      pagesTotal,
+      hasNextPage: true,
+      hasPreviousPage: false,
+    };
+  }
 
   return {
     skip,
     pagesTotal,
-    take: Number(safeLimit),
+    take:
+      isLastPage || isOnlyLimit || isFirstPage
+        ? Math.abs(safeLimit)
+        : safeLimit,
     hasNextPage: !isLastPage,
     hasPreviousPage: !isFirstPage,
   };

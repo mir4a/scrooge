@@ -97,6 +97,8 @@ export async function getRecordsByDateRange({
     page,
   });
 
+  console.table({ skip, take, pagesTotal, recordsTotal, cursor, limit, page });
+
   const records = await prisma.record.findMany({
     take,
     skip,

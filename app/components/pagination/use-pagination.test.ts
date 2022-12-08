@@ -1,6 +1,5 @@
 import { renderHook } from "@testing-library/react";
 import usePagination from "./use-pagination";
-import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import { useSearchParams, useSubmit } from "@remix-run/react";
 
 // helper function for FormData comparison
@@ -55,7 +54,7 @@ describe("usePagination", () => {
   });
 
   it("makes multiple pages when limit is less than total number of entries", async () => {
-    useSearchParams.mockReturnValue([
+    (useSearchParams as any).mockReturnValue([
       new URLSearchParams({
         limit: "5",
       }) as any,
@@ -72,7 +71,7 @@ describe("usePagination", () => {
   });
 
   it("return correct cursor on last page", async () => {
-    useSearchParams.mockReturnValue([
+    (useSearchParams as any).mockReturnValue([
       new URLSearchParams({
         limit: "5",
         page: "3",
@@ -99,7 +98,7 @@ describe("paginaion callback", () => {
   });
 
   it("should set correct cursor on callback when page is overrun", async () => {
-    useSearchParams.mockReturnValue([
+    (useSearchParams as any).mockReturnValue([
       new URLSearchParams({
         limit: "5",
         page: "3",
@@ -125,11 +124,11 @@ describe("paginaion callback", () => {
     expectedFormData.append("cursor", "11");
     expectedFormData.append("limit", "5");
     expectedFormData.append("page", "3");
-    compareFormData(submit.calls[0][0], expectedFormData);
+    compareFormData((submit as any).calls[0][0], expectedFormData);
   });
 
   it("should set correct cursor on callback on last page", async () => {
-    useSearchParams.mockReturnValue([
+    (useSearchParams as any).mockReturnValue([
       new URLSearchParams({
         limit: "5",
         page: "2",
@@ -155,11 +154,11 @@ describe("paginaion callback", () => {
     expectedFormData.append("cursor", "10");
     expectedFormData.append("limit", "5");
     expectedFormData.append("page", "3");
-    compareFormData(submit.calls[0][0], expectedFormData);
+    compareFormData((submit as any).calls[0][0], expectedFormData);
   });
 
   it("should set correct cursor on callback on the penultimate page and go forward", async () => {
-    useSearchParams.mockReturnValue([
+    (useSearchParams as any).mockReturnValue([
       new URLSearchParams({
         limit: "5",
         page: "2",
@@ -185,11 +184,11 @@ describe("paginaion callback", () => {
     expectedFormData.append("cursor", "10");
     expectedFormData.append("limit", "5");
     expectedFormData.append("page", "3");
-    compareFormData(submit.calls[0][0], expectedFormData);
+    compareFormData((submit as any).calls[0][0], expectedFormData);
   });
 
   it("should set correct cursor on callback on first page and go forward", async () => {
-    useSearchParams.mockReturnValue([
+    (useSearchParams as any).mockReturnValue([
       new URLSearchParams({
         limit: "5",
         page: "1",
@@ -215,11 +214,11 @@ describe("paginaion callback", () => {
     expectedFormData.append("cursor", "5");
     expectedFormData.append("limit", "5");
     expectedFormData.append("page", "2");
-    compareFormData(submit.calls[0][0], expectedFormData);
+    compareFormData((submit as any).calls[0][0], expectedFormData);
   });
 
   it("should set correct cursor on callback on first page and go backward", async () => {
-    useSearchParams.mockReturnValue([
+    (useSearchParams as any).mockReturnValue([
       new URLSearchParams({
         limit: "5",
         page: "1",
@@ -245,11 +244,11 @@ describe("paginaion callback", () => {
     expectedFormData.append("cursor", "1");
     expectedFormData.append("limit", "-5");
     expectedFormData.append("page", "1");
-    compareFormData(submit.calls[0][0], expectedFormData);
+    compareFormData((submit as any).calls[0][0], expectedFormData);
   });
 
   it("should set correct cursor on callback on the second page and go backward", async () => {
-    useSearchParams.mockReturnValue([
+    (useSearchParams as any).mockReturnValue([
       new URLSearchParams({
         limit: "5",
         page: "2",
@@ -275,6 +274,6 @@ describe("paginaion callback", () => {
     expectedFormData.append("cursor", "6");
     expectedFormData.append("limit", "-5");
     expectedFormData.append("page", "1");
-    compareFormData(submit.calls[0][0], expectedFormData);
+    compareFormData((submit as any).calls[0][0], expectedFormData);
   });
 });
