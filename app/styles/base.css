@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scrollbar-gutter: stable both-edges;
+}
 
 body {
   font-family: 'Baskerville', serif;
