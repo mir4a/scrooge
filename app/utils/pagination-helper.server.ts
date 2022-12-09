@@ -35,6 +35,7 @@ interface PaginationHelperArgs {
   cursor?: string | null;
   limit?: string | null;
   page?: string | null;
+  prevPage?: string | null;
 }
 
 type PaginationHelperResult = {
@@ -50,10 +51,12 @@ export default function paginationHelper({
   cursor,
   limit,
   page,
+  prevPage,
 }: PaginationHelperArgs): PaginationHelperResult {
   const parsedPage = parseNumber(page);
+  const parsedPrevPage = parseNumber(prevPage);
   const parsedLimit = parseNumber(limit);
-  const isBackward = parsedLimit < 0;
+  const isBackward = parsedPage < parsedPrevPage;
   const isOnlyLimit = parsedPage <= 0 && limit;
   const isLimitSafe = Math.abs(parsedLimit) <= MAX_RECORDS_PER_PAGE;
   const safeLimit = isLimitSafe
@@ -62,11 +65,10 @@ export default function paginationHelper({
     ? -MAX_RECORDS_PER_PAGE
     : MAX_RECORDS_PER_PAGE;
   const pagesTotal = Math.ceil(total / Math.abs(Number(safeLimit)));
-  const isFirstPage = parsedPage === 1 || parsedPage <= 0;
   const isLastPage = parsedPage >= pagesTotal;
+  const isFirstPage = parsedPage <= 1;
 
-  const skip =
-    (isFirstPage && isBackward) || (isLastPage && !isBackward) ? 0 : 1;
+  const skip = isFirstPage && isBackward ? 0 : 1;
 
   // no cursor or no page fallback to the first page
   if (!cursor || !page) {
@@ -83,7 +85,7 @@ export default function paginationHelper({
     skip,
     pagesTotal,
     take:
-      isLastPage || isOnlyLimit || isFirstPage
+      (isLastPage && !isBackward) || isOnlyLimit || (isFirstPage && isBackward)
         ? Math.abs(safeLimit)
         : safeLimit,
     hasNextPage: !isLastPage,
@@ -93,18 +95,21 @@ export default function paginationHelper({
 
 export function getPaginationTermsFromURL(url: string): {
   page: string | null;
+  prevPage: string | null;
   limit: string;
   cursor: string | null;
 } {
   const urlObject = new URL(url);
   const searchParams = urlObject.searchParams;
   const page = searchParams.get(PaginationTerms.PAGE);
+  const prevPage = searchParams.get(PaginationTerms.PREV_PAGE);
   const limit =
     searchParams.get(PaginationTerms.LIMIT) ?? String(DEFAULT_RECORDS_PER_PAGE);
   const cursor = searchParams.get(PaginationTerms.CURSOR);
 
   return {
     page,
+    prevPage,
     limit,
     cursor,
   };

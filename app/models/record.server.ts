@@ -8,6 +8,7 @@ export type { Record } from "@prisma/client";
 
 export interface PaginationBaseParams {
   page?: string | null;
+  prevPage?: string | null;
   limit?: string | null;
   cursor?: string | null;
 }
@@ -75,6 +76,7 @@ export async function getRecordsByDateRange({
   cursor,
   limit,
   page,
+  prevPage,
 }: GetRecordsByDateRangeParams): Promise<GetRecordsByDateRangeResult> {
   const predicate = {
     userId,
@@ -90,14 +92,28 @@ export async function getRecordsByDateRange({
     },
   });
 
-  const { skip, take, pagesTotal } = paginationHelper({
-    total: recordsTotal,
+  const { skip, take, pagesTotal, hasNextPage, hasPreviousPage } =
+    paginationHelper({
+      total: recordsTotal,
+      cursor,
+      limit,
+      page,
+      prevPage,
+    });
+
+  console.table({
+    skip,
+    take,
+    pagesTotal,
+    recordsTotal,
+    hasNextPage,
+    hasPreviousPage,
+    "------": "-------------",
     cursor,
     limit,
     page,
+    prevPage,
   });
-
-  console.table({ skip, take, pagesTotal, recordsTotal, cursor, limit, page });
 
   const records = await prisma.record.findMany({
     take,
@@ -111,7 +127,8 @@ export async function getRecordsByDateRange({
         select: { name: true, color: true },
       },
     },
-    orderBy: { date: "desc" },
+    // INFO: orderBy need to be in sync with cursor, for instance, if cursor is id, then orderBy should be id
+    orderBy: { id: "desc" },
   });
 
   return {

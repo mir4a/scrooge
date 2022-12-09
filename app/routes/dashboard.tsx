@@ -53,7 +53,9 @@ export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
   const startDate = url.searchParams.get("startDate");
   const endDate = url.searchParams.get("endDate");
-  const { cursor, limit, page } = getPaginationTermsFromURL(request.url);
+  const { cursor, limit, page, prevPage } = getPaginationTermsFromURL(
+    request.url
+  );
   const dateNow = new Date();
   dateNow.setUTCHours(0, 0, 0, 0);
   dateNow.setUTCDate(1);
@@ -95,6 +97,7 @@ export async function loader({ request }: LoaderArgs) {
     cursor,
     limit,
     page,
+    prevPage,
   });
   const incomes = await getIncomes({ userId });
   const expenses = await getExpensesGroupedByCategory({ userId });

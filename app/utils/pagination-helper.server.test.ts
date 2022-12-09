@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import paginationHelper from "./pagination-helper.server";
 
 describe("paginationHelper", () => {
-  it("should return skip 0 if there's no next page", () => {
+  it("should return skip 1 if we're on last page", () => {
     const { skip, take, pagesTotal, hasNextPage, hasPreviousPage } =
       paginationHelper({
         total: 15,
@@ -11,7 +11,7 @@ describe("paginationHelper", () => {
         page: "3",
       });
 
-    expect(skip).toBe(0);
+    expect(skip).toBe(1);
     expect(take).toBe(5);
     expect(pagesTotal).toBe(3);
     expect(hasNextPage).toBe(false);
@@ -157,7 +157,7 @@ describe("paginationHelper", () => {
       expect(hasPreviousPage).toBe(false);
     });
 
-    it("should return last page is parsed page is overrun", () => {
+    it("should return last page if parsed page is overrun", () => {
       const { skip, take, pagesTotal, hasNextPage, hasPreviousPage } =
         paginationHelper({
           cursor: "11",
@@ -166,7 +166,7 @@ describe("paginationHelper", () => {
           page: "10",
         });
 
-      expect(skip).toBe(0);
+      expect(skip).toBe(1);
       expect(take).toBe(5);
       expect(pagesTotal).toBe(3);
       expect(hasNextPage).toBe(false);
