@@ -8,7 +8,6 @@ import { queryToFormData } from "~/utils/query-to-form-data";
 
 export type PaginationGenericData = {
   id: string;
-  createdAt: string;
 };
 
 export interface PaginationProps {
