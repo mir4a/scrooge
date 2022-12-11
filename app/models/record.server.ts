@@ -53,7 +53,7 @@ export async function getRecords({
     cursor: cursor ? { id: cursor } : undefined,
     where: predicate,
     include: { category: true },
-    orderBy: { date: "desc" },
+    orderBy: { id: "desc" },
   });
 
   return { records, pagesTotal, recordsTotal };
@@ -92,23 +92,8 @@ export async function getRecordsByDateRange({
     },
   });
 
-  const { skip, take, pagesTotal, hasNextPage, hasPreviousPage } =
-    paginationHelper({
-      total: recordsTotal,
-      cursor,
-      limit,
-      page,
-      prevPage,
-    });
-
-  console.table({
-    skip,
-    take,
-    pagesTotal,
-    recordsTotal,
-    hasNextPage,
-    hasPreviousPage,
-    "------": "-------------",
+  const { skip, take, pagesTotal } = paginationHelper({
+    total: recordsTotal,
     cursor,
     limit,
     page,
