@@ -8,7 +8,7 @@ import { getRecords } from "~/models/record.server";
 import Header from "~/components/layout/header";
 import RecordTable from "~/components/record/record-table";
 import MainLayout from "~/components/layout/main";
-import { getPaginationTermsFromURL } from "~/utils/pagination-helper.server";
+import { getPaginationTermsFromURL } from "~/utils/pagination-terms";
 import {
   Pagination,
   PaginationIndicator,

@@ -35,8 +35,10 @@ import {
 } from "~/components/pagination";
 import EntriesPerPage from "~/components/entries-per-page";
 import { queryToFormData } from "~/utils/query-to-form-data";
-import { getPaginationTermsFromURL } from "~/utils/pagination-helper.server";
-import { PaginationTerms } from "~/utils/pagination-const";
+import {
+  PaginationTerms,
+  getPaginationTermsFromURL,
+} from "~/utils/pagination-terms";
 
 export type LoaderData = {
   categories: Pick<ICategory, "id" | "color" | "name">[];

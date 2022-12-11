@@ -1,7 +1,7 @@
 import type { User, Record } from "@prisma/client";
 
 import { prisma } from "~/db.server";
-import { DEFAULT_RECORDS_PER_PAGE } from "~/utils/pagination-const";
+import { DEFAULT_RECORDS_PER_PAGE } from "~/utils/pagination-terms";
 import paginationHelper from "~/utils/pagination-helper.server";
 
 export type { Record } from "@prisma/client";

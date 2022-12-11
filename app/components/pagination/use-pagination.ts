@@ -1,8 +1,8 @@
 import { useSearchParams, useSubmit } from "@remix-run/react";
 import {
-  DEFAULT_RECORDS_PER_PAGE,
+  getPaginationTermsFromSearchParams,
   PaginationTerms,
-} from "~/utils/pagination-const";
+} from "~/utils/pagination-terms";
 import parseNumber from "~/utils/parse-number";
 import { queryToFormData } from "~/utils/query-to-form-data";
 
@@ -32,11 +32,9 @@ export default function usePagination({
 }: PaginationProps): PaginationResult {
   const [searchParams] = useSearchParams();
   const submit = useSubmit();
-  const page = searchParams.get(PaginationTerms.PAGE) || "1";
+  const { page, limit, cursor } =
+    getPaginationTermsFromSearchParams(searchParams);
   const parsedPage = parseNumber(page);
-  const limit =
-    searchParams.get(PaginationTerms.LIMIT) || String(DEFAULT_RECORDS_PER_PAGE);
-  const cursor = searchParams.get(PaginationTerms.CURSOR) || null;
   const parsedLimit = parseNumber(limit);
   const totalPages = Math.ceil(total / Math.abs(parsedLimit));
 
