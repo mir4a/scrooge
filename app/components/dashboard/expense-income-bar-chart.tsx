@@ -17,12 +17,17 @@ export interface ExpenseIncomeBarChartProps {
 export default function ExpenseIncomeBarChart({
   data,
 }: ExpenseIncomeBarChartProps) {
+  const dataNormalized = data.map((item) => ({
+    ...item,
+    date: new Date(item.date).toLocaleDateString(),
+  }));
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart
         width={500}
         height={300}
-        data={data}
+        data={dataNormalized}
         margin={{
           top: 5,
           right: 30,
@@ -35,7 +40,7 @@ export default function ExpenseIncomeBarChart({
         <Tooltip />
         <Legend />
         <Bar dataKey="_sum.value" name="transaction amount">
-          {data.map((entry, index) => {
+          {dataNormalized.map((entry, index) => {
             const color = entry._sum.value > 0 ? "#48bb78" : "#f56565";
             return <Cell key={`cell-${index}`} fill={color} />;
           })}

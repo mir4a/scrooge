@@ -40,7 +40,7 @@ export async function action({ request }: ActionArgs) {
       info: info ? null : "Name is required",
       date: date ? null : "Colour is required",
       value: value ? null : "Value is required",
-      categoryId: categoryId ? null : "Category is required",
+      categoryId: null,
     },
   };
 

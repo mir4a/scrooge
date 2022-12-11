@@ -27,7 +27,7 @@ export default function CategoriesPage() {
           <div className="col-span-2">
             <Link
               to="new"
-              className="Button Button--primary mb-4 block p-2 text-center text-xl font-bold"
+              className="Button Button--primary mb-10 block w-fit justify-self-end py-3 px-8 text-center text-xl font-bold"
             >
               + New Category
             </Link>

@@ -128,7 +128,9 @@ export default function RecordDetailsPage() {
       <h3 className="text-2xl font-bold">Selected record</h3>
 
       <div className="flex items-center">
-        <RecordRow record={data.record} clickable={false} />
+        <div className="table w-full table-fixed border-collapse text-lg">
+          <RecordRow record={data.record} clickable={false} />
+        </div>
 
         <Form method="post">
           <input type="hidden" name="_method" value="DELETE" />

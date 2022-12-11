@@ -3,6 +3,10 @@
   box-shadow: theme('colors.stone.400') 2px 2px 0 1px;
 }
 
+.Input--small {
+  @apply px-2 py-1 text-sm;
+}
+
 .Input[type="color"] {
   min-width: 5rem;
   min-height: 5rem;

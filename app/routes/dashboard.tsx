@@ -5,9 +5,9 @@ import { getRecordsByDateRange } from "~/models/record.server";
 import { json } from "@remix-run/node";
 import {
   Form,
-  useCatch,
   useLoaderData,
   useSearchParams,
+  useSubmit,
 } from "@remix-run/react";
 
 import CategoryListItem from "~/components/category/category-list-item";
@@ -22,17 +22,31 @@ import { getCategories } from "~/models/category.server";
 import {
   getExpensesGroupedByCategory,
   getIncomes,
-  getRecords,
   getAllWithinDateRange,
 } from "~/models/record.server";
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
+import {
+  Pagination,
+  PaginationIndicator,
+  PaginationNext,
+  PaginationPrev,
+  usePagination,
+} from "~/components/pagination";
+import EntriesPerPage from "~/components/entries-per-page";
+import { queryToFormData } from "~/utils/query-to-form-data";
+import {
+  PaginationTerms,
+  getPaginationTermsFromURL,
+} from "~/utils/pagination-terms";
 
 export type LoaderData = {
   categories: Pick<ICategory, "id" | "color" | "name">[];
   records: IRecord[];
   expenses: any[];
   incomes: any[];
+  recordsTotal: number;
+  pagesTotal: number;
   allWithinDateRange: any[];
   error?: string;
 };
@@ -41,6 +55,9 @@ export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
   const startDate = url.searchParams.get("startDate");
   const endDate = url.searchParams.get("endDate");
+  const { cursor, limit, page, prevPage } = getPaginationTermsFromURL(
+    request.url
+  );
   const dateNow = new Date();
   dateNow.setUTCHours(0, 0, 0, 0);
   dateNow.setUTCDate(1);
@@ -59,6 +76,8 @@ export async function loader({ request }: LoaderArgs) {
         categories: [],
         expenses: [],
         records: [],
+        recordsTotal: 0,
+        pagesTotal: 0,
         incomes: [],
         allWithinDateRange: [],
       },
@@ -73,10 +92,14 @@ export async function loader({ request }: LoaderArgs) {
 
   const userId = await requireUserId(request);
   const categories = await getCategories({ userId });
-  const records = await getRecordsByDateRange({
+  const { records, recordsTotal, pagesTotal } = await getRecordsByDateRange({
     userId,
     startDate: dateRange.startDate,
     endDate: dateRange.endDate,
+    cursor,
+    limit,
+    page,
+    prevPage,
   });
   const incomes = await getIncomes({ userId });
   const expenses = await getExpensesGroupedByCategory({ userId });
@@ -90,6 +113,8 @@ export async function loader({ request }: LoaderArgs) {
     error: undefined,
     categories,
     records,
+    recordsTotal,
+    pagesTotal,
     incomes,
     expenses,
     allWithinDateRange,
@@ -102,6 +127,21 @@ export default function Dashboard() {
   const [searchParams] = useSearchParams();
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
+
+  const [{ limit, page }, paginationCallback] = usePagination({
+    data: data.records,
+    total: data.recordsTotal,
+  });
+
+  const submit = useSubmit();
+
+  const handleEntriesPerPage = (newEntriesPerPage: number) => {
+    // existing query params to FormData
+    const formData = queryToFormData(searchParams);
+    // update form data with new cursor
+    formData.set(PaginationTerms.LIMIT, String(newEntriesPerPage));
+    submit(formData);
+  };
 
   return (
     <>
@@ -118,8 +158,8 @@ export default function Dashboard() {
             <ExpenseIncomeBarChart data={data.allWithinDateRange} />
           </div>
         </div>
-        <div className="grid-cols-16 grid gap-4">
-          <div className="col-span-6">
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-4">
             <h2 className="text-xl font-bold">Categories</h2>
             <small className="text-gray-500 dark:text-stone-300">
               select to edit or delete
@@ -131,7 +171,7 @@ export default function Dashboard() {
             </ul>
           </div>
 
-          <div className="col-span-9 col-start-8">
+          <div className="col-span-7 col-start-6">
             <div className="my-5 border-y-2 py-4 dark:border-stone-700">
               {data.error && (
                 <div className="my-5 bg-red-500 p-4 text-white dark:bg-pink-500">
@@ -170,6 +210,22 @@ export default function Dashboard() {
             </div>
             <h2 className="mb-8 text-xl font-bold">All records</h2>
             <RecordTable records={data.records} />
+            <Pagination
+              page={Number(page)}
+              onChangePage={paginationCallback}
+              totalPages={data.pagesTotal}
+              className="mt-8"
+            >
+              <div className="flex items-center space-x-4">
+                <PaginationPrev />
+                <PaginationIndicator />
+                <PaginationNext />
+                <EntriesPerPage
+                  onChange={handleEntriesPerPage}
+                  limit={Number(limit)}
+                />
+              </div>
+            </Pagination>
           </div>
         </div>
       </MainLayout>

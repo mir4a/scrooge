@@ -1,8 +1,17 @@
 import type { User, Record } from "@prisma/client";
 
 import { prisma } from "~/db.server";
+import { DEFAULT_RECORDS_PER_PAGE } from "~/utils/pagination-terms";
+import paginationHelper from "~/utils/pagination-helper.server";
 
 export type { Record } from "@prisma/client";
+
+export interface PaginationBaseParams {
+  page?: string | null;
+  prevPage?: string | null;
+  limit?: string | null;
+  cursor?: string | null;
+}
 
 export function getRecord({
   id,
@@ -16,34 +25,102 @@ export function getRecord({
   });
 }
 
-export function getRecords({ userId }: { userId: User["id"] }) {
-  return prisma.record.findMany({
-    where: { userId },
-    include: { category: true },
-    orderBy: { date: "desc" },
+export interface GetRecordsParams extends PaginationBaseParams {
+  userId: User["id"];
+}
+export interface GetRecordsResult {
+  records: Record[];
+  pagesTotal: number;
+  recordsTotal: number;
+}
+export async function getRecords({
+  userId,
+  page,
+  limit,
+  cursor,
+}: GetRecordsParams): Promise<GetRecordsResult> {
+  const predicate = { userId };
+  const recordsTotal = await prisma.record.count({ where: predicate });
+  const { skip, take, pagesTotal } = paginationHelper({
+    total: recordsTotal,
+    cursor,
+    limit,
+    page,
   });
+  const records = await prisma.record.findMany({
+    take,
+    skip,
+    cursor: cursor ? { id: cursor } : undefined,
+    where: predicate,
+    include: { category: true },
+    orderBy: { id: "desc" },
+  });
+
+  return { records, pagesTotal, recordsTotal };
 }
 
-export function getRecordsByDateRange({
-  userId,
-  startDate,
-  endDate,
-}: {
+export interface GetRecordsByDateRangeParams extends PaginationBaseParams {
   userId: User["id"];
   startDate: string;
   endDate: string;
-}) {
-  return prisma.record.findMany({
+}
+export interface GetRecordsByDateRangeResult {
+  records: Record[];
+  recordsTotal: number;
+  pagesTotal: number;
+}
+export async function getRecordsByDateRange({
+  userId,
+  startDate,
+  endDate,
+  cursor,
+  limit,
+  page,
+  prevPage,
+}: GetRecordsByDateRangeParams): Promise<GetRecordsByDateRangeResult> {
+  const predicate = {
+    userId,
+    date: {
+      gte: new Date(startDate).toISOString(),
+      lte: new Date(endDate).toISOString(),
+    },
+  };
+  // Unfortunatelly, Prisma doesn't have total count in findMany and therefore I have to have 2 queries for nicely controlled pagination, ref: https://github.com/prisma/prisma/issues/7550
+  const recordsTotal = await prisma.record.count({
     where: {
-      userId,
-      date: {
-        gte: new Date(startDate).toISOString(),
-        lte: new Date(endDate).toISOString(),
+      ...predicate,
+    },
+  });
+
+  const { skip, take, pagesTotal } = paginationHelper({
+    total: recordsTotal,
+    cursor,
+    limit,
+    page,
+    prevPage,
+  });
+
+  const records = await prisma.record.findMany({
+    take,
+    skip,
+    cursor: cursor ? { id: cursor } : undefined,
+    where: {
+      ...predicate,
+    },
+    include: {
+      category: {
+        select: { name: true, color: true },
       },
     },
-    include: { category: true },
-    orderBy: { date: "desc" },
+    // INFO: orderBy need to be in sync with cursor, for instance, if cursor is id, then orderBy should be id
+    orderBy: { id: "desc" },
   });
+
+  return {
+    records,
+    recordsTotal,
+    pagesTotal,
+  };
 }
 
 export function getRecordsByCategory({
@@ -54,6 +131,7 @@ export function getRecordsByCategory({
   categoryId: string;
 }) {
   return prisma.record.findMany({
+    take: DEFAULT_RECORDS_PER_PAGE,
     where: { userId, categoryId },
     select: { id: true, info: true, date: true, value: true, category: true },
     orderBy: { date: "desc" },
@@ -125,6 +203,7 @@ export function deleteRecord({
 
 export function getExpenses({ userId }: { userId: User["id"] }) {
   return prisma.record.findMany({
+    take: DEFAULT_RECORDS_PER_PAGE,
     where: { userId, value: { lt: 0 } },
     select: { id: true, info: true, date: true, value: true, category: true },
     orderBy: { date: "desc" },
@@ -149,6 +228,7 @@ export function getExpensesGroupedByCategory({
 
 export function getIncomes({ userId }: { userId: User["id"] }) {
   return prisma.record.findMany({
+    take: DEFAULT_RECORDS_PER_PAGE,
     where: { userId, value: { gt: 0 } },
     select: { id: true, info: true, date: true, value: true, category: true },
     orderBy: { date: "desc" },

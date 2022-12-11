@@ -48,7 +48,7 @@ async function seed() {
     },
   });
 
-  const categoryGroceries = await prisma.category.create({
+  await prisma.category.create({
     data: {
       name: "Groceries",
       color: "#00FF00",
@@ -80,34 +80,77 @@ async function seed() {
     },
   });
 
-  await prisma.record.create({
+  await prisma.category.create({
     data: {
-      info: "Lidl",
-      date: new Date("2021-01-01"),
-      value: -100.23,
+      name: "Travel",
+      color: "#00FFFF",
       userId: user.id,
-      categoryId: categoryGroceries.id,
     },
   });
 
-  await prisma.record.create({
+  await prisma.category.create({
     data: {
-      info: "Aldi",
-      date: new Date("2021-01-02"),
-      value: -200.23,
+      name: "Studying",
+      color: "#000000",
       userId: user.id,
-      categoryId: categoryGroceries.id,
     },
   });
 
-  await prisma.record.create({
+  await prisma.category.create({
     data: {
-      info: "Salary",
-      date: new Date("2021-01-03"),
-      value: 45000,
+      name: "Entertainment",
+      color: "#FFFFFF",
       userId: user.id,
     },
   });
+
+  await prisma.category.create({
+    data: {
+      name: "Savings",
+      color: "#FF8000",
+      userId: user.id,
+    },
+  });
+
+  const categories = await prisma.category.findMany({
+    where: { userId: user.id },
+  });
+
+  // seed salaries ;)
+  for (let i = 0; i < 12; i++) {
+    const date = new Date();
+    date.setMonth(date.getMonth() - i);
+    date.setDate(5);
+    date.setFullYear(2022);
+    await prisma.record.create({
+      data: {
+        info: "Salary",
+        date: date,
+        value: 10000 + Math.random() * 1000,
+        userId: user.id,
+        categoryId: categories.find((c) => c.name === "Work")?.id,
+      },
+    });
+  }
+
+  // seed more expenses
+  for (let i = 0; i < 2000; i++) {
+    const date = new Date();
+    date.setMonth(0);
+    date.setDate(1);
+    date.setDate(date.getDate() - i);
+    date.setFullYear(2022);
+    await prisma.record.create({
+      data: {
+        info: `Expense ${i}`,
+        date: date,
+        value: -(Math.random() * 100 + Math.random() * 1000),
+        userId: user.id,
+        categoryId:
+          categories[Math.floor(Math.random() * categories.length)].id,
+      },
+    });
+  }
 
   console.log(`Database has been seeded. 🌱`);
 }

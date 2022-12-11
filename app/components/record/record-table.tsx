@@ -12,7 +12,7 @@ export interface RecordTableProps {
 
 export default function RecordTable({ records }: RecordTableProps) {
   return (
-    <div className="table w-full table-auto border-collapse text-lg">
+    <div className="table w-full table-fixed border-collapse text-lg">
       <div className="table-header-group dark:bg-neutral-900">
         <div className="table-row">
           <div className="table-cell border-b p-4 pl-8  pb-3 text-left font-medium text-slate-400 dark:border-slate-600 dark:text-slate-200">
