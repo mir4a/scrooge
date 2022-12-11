@@ -42,11 +42,6 @@ export default function usePagination({
 
   const callback = (newPage: number) => {
     const isOverrun = newPage > totalPages;
-    // const isWeirdPageAndNoCursor =
-    //   (parsedPage < 0 || parsedPage > 1) && !cursor;
-
-    // FIXME: there's an issue when going to the last page and back moves the cursor one entry back
-    // existing query params to FormData
     const formData = queryToFormData(searchParams);
     const isBackward = newPage < parsedPage;
     const calculatedLimit = isBackward

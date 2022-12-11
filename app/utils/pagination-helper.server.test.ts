@@ -9,6 +9,7 @@ describe("paginationHelper", () => {
         cursor: "10",
         limit: "5",
         page: "3",
+        prevPage: "2",
       });
 
     expect(skip).toBe(1);
@@ -25,6 +26,7 @@ describe("paginationHelper", () => {
         cursor: "6",
         limit: "5",
         page: "2",
+        prevPage: "1",
       });
 
     expect(skip).toBe(1);

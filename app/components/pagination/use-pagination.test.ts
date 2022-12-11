@@ -90,8 +90,7 @@ describe("usePagination", () => {
   });
 });
 
-// eslint-disable-next-line jest/no-disabled-tests
-describe.todo("paginaion callback", () => {
+describe("paginaion callback", () => {
   beforeEach(() => {});
 
   afterEach(() => {
@@ -125,6 +124,7 @@ describe.todo("paginaion callback", () => {
     expectedFormData.append("cursor", "11");
     expectedFormData.append("limit", "5");
     expectedFormData.append("page", "3");
+    expectedFormData.append("prevPage", "3");
     compareFormData((submit as any).calls[0][0], expectedFormData);
   });
 
@@ -132,7 +132,8 @@ describe.todo("paginaion callback", () => {
     (useSearchParams as any).mockReturnValue([
       new URLSearchParams({
         limit: "5",
-        page: "2",
+        prevPage: "2",
+        page: "3",
         cursor: "6",
       }) as any,
     ]);
@@ -155,6 +156,7 @@ describe.todo("paginaion callback", () => {
     expectedFormData.append("cursor", "10");
     expectedFormData.append("limit", "5");
     expectedFormData.append("page", "3");
+    expectedFormData.append("prevPage", "2");
     compareFormData((submit as any).calls[0][0], expectedFormData);
   });
 
@@ -163,6 +165,7 @@ describe.todo("paginaion callback", () => {
       new URLSearchParams({
         limit: "5",
         page: "2",
+        prevPage: "1",
         cursor: "6",
       }) as any,
     ]);
@@ -185,6 +188,8 @@ describe.todo("paginaion callback", () => {
     expectedFormData.append("cursor", "10");
     expectedFormData.append("limit", "5");
     expectedFormData.append("page", "3");
+    expectedFormData.append("prevPage", "2");
+
     compareFormData((submit as any).calls[0][0], expectedFormData);
   });
 
@@ -215,6 +220,7 @@ describe.todo("paginaion callback", () => {
     expectedFormData.append("cursor", "5");
     expectedFormData.append("limit", "5");
     expectedFormData.append("page", "2");
+    expectedFormData.append("prevPage", "1");
     compareFormData((submit as any).calls[0][0], expectedFormData);
   });
 
@@ -245,15 +251,17 @@ describe.todo("paginaion callback", () => {
     expectedFormData.append("cursor", "1");
     expectedFormData.append("limit", "-5");
     expectedFormData.append("page", "1");
+    expectedFormData.append("prevPage", "1");
     compareFormData((submit as any).calls[0][0], expectedFormData);
   });
 
-  it("should set correct cursor on callback on the second page and go backward", async () => {
+  it("should remove cursor, page and prevPage on callback on the second page and go backward", async () => {
     (useSearchParams as any).mockReturnValue([
       new URLSearchParams({
-        limit: "5",
+        limit: "-5",
         page: "2",
-        cursor: "6",
+        prevPage: "3",
+        cursor: "11",
       }) as any,
     ]);
 
@@ -272,9 +280,7 @@ describe.todo("paginaion callback", () => {
     expect(submit).toBeCalledTimes(1);
 
     const expectedFormData = new FormData();
-    expectedFormData.append("cursor", "6");
     expectedFormData.append("limit", "-5");
-    expectedFormData.append("page", "1");
     compareFormData((submit as any).calls[0][0], expectedFormData);
   });
 });
