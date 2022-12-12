@@ -143,6 +143,20 @@ export default function Dashboard() {
     submit(formData);
   };
 
+  const handleGraphDateRange = (newDateRange: { start: Date; end: Date }) => {
+    // existing query params to FormData
+    const formData = queryToFormData(searchParams);
+    // update form data with new cursor
+    formData.set("startDate", newDateRange.start.toISOString().slice(0, 10));
+    formData.set("endDate", newDateRange.end.toISOString().slice(0, 10));
+    // reset pagination, otherwise it will be out of sync
+    formData.delete(PaginationTerms.CURSOR);
+    formData.delete(PaginationTerms.PREV_PAGE);
+    formData.delete(PaginationTerms.PAGE);
+
+    submit(formData);
+  };
+
   return (
     <>
       <Header username={user.email} />
@@ -155,7 +169,10 @@ export default function Dashboard() {
             />
           </div>
           <div className="col-span-4">
-            <ExpenseIncomeBarChart data={data.allWithinDateRange} />
+            <ExpenseIncomeBarChart
+              data={data.allWithinDateRange}
+              onRangeChange={handleGraphDateRange}
+            />
           </div>
         </div>
         <div className="grid grid-cols-12 gap-4">

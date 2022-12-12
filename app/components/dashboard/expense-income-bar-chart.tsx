@@ -12,15 +12,38 @@ import {
 
 export interface ExpenseIncomeBarChartProps {
   data: any[];
+  onRangeChange?: (range: { start: Date; end: Date }) => void;
 }
 
 export default function ExpenseIncomeBarChart({
   data,
+  onRangeChange,
 }: ExpenseIncomeBarChartProps) {
+  const [startDate, setStartDate] = React.useState<Date>();
+
   const dataNormalized = data.map((item) => ({
     ...item,
     date: new Date(item.date).toLocaleDateString(),
+    originalDate: item.date,
   }));
+
+  const handleMouseDown = (e: any, s: any) => {
+    const originalDate = e.activePayload[0].payload.originalDate;
+    setStartDate(new Date(originalDate));
+  };
+
+  const handleMouseUp = (e: any, s: any) => {
+    const originalDate = e.activePayload[0].payload.originalDate;
+    const endDate = new Date(originalDate);
+
+    if (startDate) {
+      if (startDate.getTime() > endDate.getTime()) {
+        onRangeChange?.({ start: endDate, end: startDate });
+      } else {
+        onRangeChange?.({ start: startDate, end: endDate });
+      }
+    }
+  };
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -34,6 +57,8 @@ export default function ExpenseIncomeBarChart({
           left: 20,
           bottom: 5,
         }}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
       >
         <XAxis dataKey="date" />
         <YAxis />
