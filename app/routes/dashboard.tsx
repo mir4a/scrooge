@@ -170,7 +170,7 @@ export default function Dashboard() {
           </div>
           <div className="col-span-4">
             <ExpenseIncomeBarChart
-              data={data.allWithinDateRange}
+              data={data.records}
               onRangeChange={handleGraphDateRange}
             />
           </div>

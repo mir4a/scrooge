@@ -78,11 +78,20 @@ export async function getRecordsByDateRange({
   page,
   prevPage,
 }: GetRecordsByDateRangeParams): Promise<GetRecordsByDateRangeResult> {
+  const startDateISO = new Date(startDate).toISOString();
+  let endDateISO = new Date(endDate).toISOString();
+  if (startDateISO === endDateISO) {
+    let startDateTillMidnight = new Date(startDateISO);
+    startDateTillMidnight.setHours(23, 59, 59, 999);
+    endDateISO = startDateTillMidnight.toISOString();
+  }
   const predicate = {
     userId,
     date: {
-      gte: new Date(startDate).toISOString(),
-      lte: new Date(endDate).toISOString(),
+      gte: startDateISO,
+      lte: endDateISO,
+      // gte: new Date(startDate).toISOString(),
+      // lte: new Date(endDate).toISOString(),
     },
   };
   // Unfortunatelly, Prisma doesn't have total count in findMany and therefore I have to have 2 queries for nicely controlled pagination, ref: https://github.com/prisma/prisma/issues/7550
@@ -113,7 +122,8 @@ export async function getRecordsByDateRange({
       },
     },
     // INFO: orderBy need to be in sync with cursor, for instance, if cursor is id, then orderBy should be id
-    orderBy: { id: "desc" },
+    // INFO: shit, it looks loke it works! I have to test it more ;)
+    orderBy: { date: "desc" },
   });
 
   return {
