@@ -40,7 +40,9 @@ export default function RecordRow({
               colour={record.category?.color}
               className="mr-2 scale-50 self-center"
             />
-            {record.category?.name}
+            <p className="shrink grow-0 overflow-hidden text-ellipsis">
+              {record.category?.name}
+            </p>
           </div>
         )}
       </div>
